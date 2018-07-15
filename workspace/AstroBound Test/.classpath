@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-assimp.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-assimp-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-bgfx.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-bgfx-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-egl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-egl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-glfw.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-glfw-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-jawt.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-jawt-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-jemalloc.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-jemalloc-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-lmdb.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-lmdb-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-lz4.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-lz4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-nanovg.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-nanovg-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-nfd.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-nfd-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-nuklear.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-nuklear-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-odbc.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-odbc-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-openal.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-openal-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-opencl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-opencl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-opengl.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-opengl-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-opengles.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-opengles-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-openvr.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-openvr-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-ovr.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-ovr-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-par.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-par-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-remotery.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-remotery-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-rpmalloc.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-rpmalloc-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-sse.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-sse-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-stb.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-stb-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-tinyexr.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-tinyexr-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-tinyfd.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-tinyfd-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-tootle.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-tootle-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-vulkan.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-vulkan-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-xxhash.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-xxhash-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-yoga.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-yoga-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/lwjgl-zstd.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:file:/C:/Users/adris/userlibs/java/lwjgl/javadoc/lwjgl-zstd-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-assimp-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-bgfx-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-glfw-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-jemalloc-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-lmdb-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-lz4-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-nanovg-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-nfd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-nuklear-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-openal-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-opengles-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-opengl-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-openvr-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-ovr-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-par-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-remotery-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-rpmalloc-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-sse-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-stb-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-tinyexr-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-tinyfd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-tootle-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-xxhash-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-yoga-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/lwjgl/natives-windows/lwjgl-zstd-natives-windows.jar"/>
+	<classpathentry kind="lib" path="C:/Users/adris/userlibs/java/joml-1.9.9.jar" sourcepath="C:/Users/adris/userlibs/java/joml-1.9.9-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
