@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureGroup>
+  <texture scale="1">Default_0.png</texture>
+  <tpe x="2" y="0" tpage="Default_0" entry="2">sprTestFighterStand_Data_0.tpe</tpe>
+  <tpe x="30" y="0" tpage="Default_0" entry="0">sprTestFighterStand_0.tpe</tpe>
+  <tpe x="30" y="0" tpage="Default_0" entry="1">sprTestFighterSwing_0.tpe</tpe>
+</TextureGroup>

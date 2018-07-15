@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TextureGroup>
+  <texture scale="1">Default_0.png</texture>
+  <tpe x="0" y="2" tpage="Default_0" entry="4">fontMain.tpe</tpe>
+  <tpe x="2" y="134" tpage="Default_0" entry="2">sprTilesetEarth_0.tpe</tpe>
+  <tpe x="2" y="170" tpage="Default_0" entry="1">sprPlayerTest_0.tpe</tpe>
+  <tpe x="18" y="170" tpage="Default_0" entry="0">sprScratchpad_0.tpe</tpe>
+  <tpe x="2" y="206" tpage="Default_0" entry="3">sprTilesetEarthCollisionMap_0.tpe</tpe>
+</TextureGroup>
