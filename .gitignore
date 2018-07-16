@@ -1,4 +1,8 @@
 
+# Java
+*.class
+*.jar
+
 # GMS
 GameMaker/Backups
 GameMaker/Cache
