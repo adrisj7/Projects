@@ -1,17 +1,24 @@
 package vehicles.redout;
 
+import java.awt.AWTException;
+import java.awt.RenderingHints.Key;
+import java.awt.event.KeyEvent;
+import java.awt.Robot;
 import java.util.List;
 
+import com.ivan.xinput.XInputAxes;
+
 import krpc.client.RPCException;
-import krpc.client.services.SpaceCenter.Camera;
 import krpc.client.services.SpaceCenter.ControlSurface;
 import krpc.client.services.SpaceCenter.Engine;
 
 public class Needler2 extends RedoutBaby2 {
 
-    public static final String VESSEL_NAME = "The Needlerino 2";
+    public static final String VESSEL_NAME = "The Needlerino 2" + " Weaponized";
 
     private ControlSurface leftAirbrake = null, rightAirbrake = null;
+
+    private Robot keyPresser;
 
     public Needler2(String serverName, String serverIPAddr, int serverPortRPC, int serverPortStream) {
         super(VESSEL_NAME, serverName, serverIPAddr, serverPortRPC, serverPortStream);
@@ -19,7 +26,6 @@ public class Needler2 extends RedoutBaby2 {
 
     @Override
     public void setup() throws RPCException {
-
         super.setup();
         super.setTargetAltitude(4);
         super.setAltitudePID(
@@ -46,15 +52,13 @@ public class Needler2 extends RedoutBaby2 {
 
         rightAirbrake = vessel.getParts().getControlSurfaces().get(0);
         leftAirbrake = vessel.getParts().getControlSurfaces().get(1);
-//        int c = 0;
-//        for(ControlSurface surface: vessel.getParts().getControlSurfaces()) {
-//            c++;
-//            if (c == 2) {
-//                leftAirbrake = surface;
-//            } else if (c == 1) {
-//                rightAirbrake = surface;
-//            }
-//        }
+        
+        try {
+            keyPresser = new Robot();
+        } catch (AWTException e) {
+            // oof nice programming here buddy
+            e.printStackTrace();
+        }
 
     }
 
@@ -114,6 +118,25 @@ public class Needler2 extends RedoutBaby2 {
         float rtrigger =  gamepad.getComponents().getAxes().rt;
         leftAirbrake.setDeployed(ltrigger > 0.1);
         rightAirbrake.setDeployed(rtrigger > 0.1);
+
+        // Weapon system, if we have one.
+        boolean fire = gamepad.getComponents().getButtons().x;
+        boolean switchNext = (gamepad.getComponents().getAxes().dpad == XInputAxes.DPAD_DOWN);
+        boolean switchPrev = (gamepad.getComponents().getAxes().dpad == XInputAxes.DPAD_UP);
+        if (fire) {
+            keyPresser.keyPress(KeyEvent.VK_1);
+            keyPresser.keyRelease(KeyEvent.VK_1);
+        }
+        if (switchNext) {
+            keyPresser.keyPress(KeyEvent.VK_3);
+        } else {
+            keyPresser.keyRelease(KeyEvent.VK_3);            
+        }
+        if (switchPrev) {
+            keyPresser.keyPress(KeyEvent.VK_2);
+        } else {
+            keyPresser.keyRelease(KeyEvent.VK_2);
+        }
     }
 
     public static void main(String[] args) {

@@ -8,6 +8,7 @@ import org.javatuples.Triplet;
 import core.PIDController;
 import core.PIDController.PIDTimeMode;
 import core.RPCClientShip;
+import core.RPCMath;
 import krpc.client.RPCException;
 import krpc.client.services.SpaceCenter.CameraMode;
 import krpc.client.services.SpaceCenter.CelestialBody;
@@ -53,6 +54,8 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 	};
 	private ControlMode controlMode;
 
+	private boolean isPlayerControlling = true; // Are we controlled by the player?
+
 	private LinkedList<EngineController> bottomEngines;
 	private LinkedList<Engine> topEngines;
 	private LinkedList<Engine> thrustEngines;
@@ -75,7 +78,7 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 	protected ReferenceFrame relativeRef;
 
 	private double lastAltitudeVal = 0;
-	private double ALTITUDE_VAL_THRESHOLD = 0.5;//0.01;
+	private double ALTITUDE_VAL_THRESHOLD = 1;//0.01;
 
 	public RedoutBaby2(String vesselName, String serverName, String serverIPAddr, int serverPortRPC,
 			int serverPortStream) {
@@ -124,7 +127,8 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 
 		vessel.getControl().setThrottle(1);
 		System.out.println(vessel.getControl().getCurrentStage());
-		vessel.getControl().activateNextStage();
+		if (spaceCenter.getActiveVessel() == vessel)
+		    vessel.getControl().activateNextStage();
 		
 		topToBottomRatio = (double) topEngines.size() / bottomEngines.size();
 
@@ -141,18 +145,27 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 		float turning = 0;
 		float rise = 0;
 		float side = 0;
-		switch(controlMode) {
-		    case REDOUT:
-		        inputThrust =  gamepad.getComponents().getAxes().rt;
-		        turning  =  threshAxis(gamepad.getComponents().getAxes().lx);
-		        rise =      threshAxis(gamepad.getComponents().getAxes().ry);
-		        side =      threshAxis(gamepad.getComponents().getAxes().rx);
-		        break;
-		    case WIPEOUT:
-                inputThrust =  gamepad.getComponents().getButtons().a ? 1 : 0;
-                turning  =  threshAxis(gamepad.getComponents().getAxes().lx);
-                rise =      0;//threshAxis(gamepad.getComponents().getAxes().ly);
-                side =      threshAxis(gamepad.getComponents().getAxes().rt - gamepad.getComponents().getAxes().lt);
+		float wipeoutBrakeLeft = 0;
+		float wipeoutBrakeRight = 0;
+		if (isPlayerControlling) {
+    		switch(controlMode) {
+    		    case REDOUT:
+    		        inputThrust =  gamepad.getComponents().getAxes().rt;
+    		        turning  =  threshAxis(gamepad.getComponents().getAxes().lx);
+    		        rise =      threshAxis(gamepad.getComponents().getAxes().ry);
+    		        side =      threshAxis(gamepad.getComponents().getAxes().rx);
+    		        break;
+    		    case WIPEOUT:
+                    inputThrust =  gamepad.getComponents().getButtons().a ? 1 : 0;
+                    turning  =  threshAxis(gamepad.getComponents().getAxes().lx);
+                    rise =      threshAxis(gamepad.getComponents().getAxes().ly);
+                    side =      threshAxis(gamepad.getComponents().getAxes().rt - gamepad.getComponents().getAxes().lt);
+                    wipeoutBrakeLeft = gamepad.getComponents().getAxes().lt;
+                    wipeoutBrakeRight = gamepad.getComponents().getAxes().rt;
+                    if (Math.abs(rise) < 0.5)
+                        rise = 0;
+                    rise *= 0.8; // No
+    		}
 		}
 
 		/// SHIP VALUES
@@ -164,7 +177,7 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 		double frontVel = getFrontVel();
 		double sideAngle = 0;//getSideAngle();
 
-
+//		double groundRoll = getSideAngle();
 
         // PID Targets
 		pitchPID.setTarget(rise * 15);
@@ -249,10 +262,10 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 	    // Airbrakes
 		double airBrakeSlowDown = (frontVel > wipeoutSpeedClampSpeed) ? ((frontVel - wipeoutSpeedClampSpeed) * wipeoutSpeedClampFactor) : 0;
         for(Engine engine : airbrakeLeftEngines) {
-            engine.setThrustLimit((float) (airBrakeSlowDown + gamepad.getComponents().getAxes().lt * wipeoutAirbrakeEngineForce * frontVel / 50f));
+            engine.setThrustLimit((float) (airBrakeSlowDown + wipeoutBrakeLeft * wipeoutAirbrakeEngineForce * frontVel / 50f));
         }
         for(Engine engine : airbrakeRightEngines) {
-            engine.setThrustLimit((float) (airBrakeSlowDown + gamepad.getComponents().getAxes().rt * wipeoutAirbrakeEngineForce * frontVel / 50f));
+            engine.setThrustLimit((float) (airBrakeSlowDown + wipeoutBrakeRight * wipeoutAirbrakeEngineForce * frontVel / 50f));
         }
 		
 		// SIDE TO SIDE
@@ -270,7 +283,7 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 		}
 
 		// Camera
-		if (spaceCenter.getCamera().getMode() == CameraMode.AUTOMATIC) {
+		if (isPlayerControlling && spaceCenter.getCamera().getMode() == CameraMode.AUTOMATIC) {
     		float cameraHeading = spaceCenter.getCamera().getHeading();
     		float deltaAngle = flight.getHeading() - cameraHeading;
     		deltaAngle = (float) (deltaAngle - Math.floor(deltaAngle / 360.0) * 360.0);
@@ -326,7 +339,10 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 
 	// This is jank...
 	private double getSideAngle() throws RPCException {
-	    CelestialBody b = vessel.getOrbit().getBody();
+	    Triplet<Double, Double, Double> euler = RPCMath.quaternionToEuler(vessel.rotation(ref));
+	    System.out.printf("%.02f\t %.02f\t %.02f\n", Math.toDegrees(euler.getValue0()), Math.toDegrees(euler.getValue1()), Math.toDegrees(euler.getValue2()));
+	    return 0;
+	    /*CelestialBody b = vessel.getOrbit().getBody();
 	    Triplet<Double, Double, Double> position = vessel.position(ref);
 	    double theta = Math.toRadians(flight.getHeading() + 90);
 	    //System.out.println(Math.toDegrees(theta));
@@ -340,6 +356,7 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 	    double theoreticalAngle = -1 * Math.toDegrees(Math.atan(1 * (altThere - altHere) / distance));
 	    theoreticalAngle = -1 * 60 * Math.pow(Math.abs(theoreticalAngle) / 60.0, 2) * Math.signum(theoreticalAngle);
 	    return theoreticalAngle;
+	    */
 	}
 
 	// Applies a deadzone/threshold to the gamepad 
@@ -458,6 +475,10 @@ public abstract class RedoutBaby2 extends RPCClientShip {
 	protected void setWipeoutSpeedClamp(double wipeoutSpeedClampSpeed, double wipeoutSpeedClampFactor) {
 	    this.wipeoutSpeedClampSpeed = wipeoutSpeedClampSpeed;
 	    this.wipeoutSpeedClampFactor = wipeoutSpeedClampFactor;
+	}
+	
+	protected void setMainPlayer(boolean isPlayerControlling) {
+	    this.isPlayerControlling = isPlayerControlling; 
 	}
 
 
