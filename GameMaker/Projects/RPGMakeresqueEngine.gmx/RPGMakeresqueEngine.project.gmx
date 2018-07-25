@@ -5,12 +5,39 @@
   </Configs>
   <NewExtensions/>
   <sounds name="sound"/>
-  <sprites name="sprites"/>
+  <sprites name="sprites">
+    <sprites name="GUI">
+      <sprite>sprites\sprWindow</sprite>
+    </sprites>
+  </sprites>
   <backgrounds name="background"/>
   <paths name="paths"/>
   <scripts name="scripts">
-    <script>scripts\dialogue_create.gml</script>
+    <scripts name="Systems">
+      <script>scripts\dialogue.gml</script>
+      <script>scripts\menu.gml</script>
+      <script>scripts\inventory.gml</script>
+      <script>scripts\variable.gml</script>
+      <script>scripts\tile.gml</script>
+      <script>scripts\window.gml</script>
+    </scripts>
   </scripts>
+  <objects name="objects">
+    <object>objects\Gamestate</object>
+    <objects name="Systems">
+      <object>objects\objDialogue</object>
+      <object>objects\objDialogueText</object>
+    </objects>
+  </objects>
+  <rooms name="rooms">
+    <room>rooms\room0</room>
+  </rooms>
+  <constants number="4">
+    <constant name="WINDOW_TITLE">"RPG Story Engine"</constant>
+    <constant name="GAME_SPEED">60</constant>
+    <constant name="VARIABLE_SYSTEM">global.variable_system</constant>
+    <constant name="INVENTORY_SYSTEM">global.inventory_system</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>
