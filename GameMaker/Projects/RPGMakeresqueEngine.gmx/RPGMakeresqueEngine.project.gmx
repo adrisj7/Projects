@@ -21,14 +21,15 @@
       <script>scripts\tile.gml</script>
       <script>scripts\window.gml</script>
       <script>scripts\input.gml</script>
+      <script>scripts\game_state.gml</script>
     </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\font_menu</font>
   </fonts>
   <objects name="objects">
-    <object>objects\Gamestate</object>
     <objects name="Systems">
+      <object>objects\Gamestate</object>
       <object>objects\objDialogue</object>
       <object>objects\objDialogueText</object>
     </objects>
