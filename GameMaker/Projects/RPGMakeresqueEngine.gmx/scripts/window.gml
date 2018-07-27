@@ -25,6 +25,7 @@ var sprite = argument0,
 var color = draw_get_color();
 var alpha = draw_get_alpha();
 
+
 // Scaling
 
 // Top and Bottom middles

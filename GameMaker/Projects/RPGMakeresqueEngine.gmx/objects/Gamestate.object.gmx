@@ -25,7 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>_debug = true;
+            <string>/// DEBUG
+_debug = true;
 
 _debug_fps_accumulator = 0;          // Accumulates the real fps each frame
 _debug_fps_accumulator_count = 0;    // How many fps's are accumulated
@@ -52,8 +53,15 @@ _debug_fps_real_averaged = 0;        // The actual averaged fps_real
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// WINDOW TITLE
+            <string>/// WINDOW TITLE AND SIZE
+
+// Title
 window_set_caption(WINDOW_TITLE);
+
+// Size + view
+view_wview = WINDOW_WIDTH;
+view_hview = WINDOW_HEIGHT;
+window_set_size(WINDOW_WIDTH, WINDOW_HEIGHT);
 </string>
           </argument>
         </arguments>
@@ -78,6 +86,74 @@ window_set_caption(WINDOW_TITLE);
 
 VARIABLE_SYSTEM = variable_system_create();
 INVENTORY_SYSTEM = inventory_create();
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// KEY INPUTS
+INPUTS = input_system_create();
+
+// up down left right
+input_put_ext(INPUTS, "up", vk_up);
+input_put_ext(INPUTS, "down", vk_down);
+input_put_ext(INPUTS, "left", vk_left);
+input_put_ext(INPUTS, "right", vk_right);
+
+// action (Z)
+input_put_ext(INPUTS, "action", ord("Z"));
+
+// back (x)
+input_put_ext(INPUTS, "back", ord("X"));
+
+// run (shift)
+input_put_ext(INPUTS, "run", vk_shift);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Testing only
+
+if (_debug) {
+    d = dialogue_create();
+    var text = dialogue_text_create("Hi! This is some text. Isn't that kinda cool and fun and cool and fun and cool and fun and cool and fun and cool and fun and cool and fun and cool and fun and oki doki then....");
+    var text2 = dialogue_text_create("oh boi now we double that, baby!");
+    dialogue_set_next(d, text);
+    dialogue_set_next(text, text2);
+    dialogue_start(d);
+}
 </string>
           </argument>
         </arguments>
@@ -122,6 +198,33 @@ if (_debug) {
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Testing only
+
+if (_debug) {
+    if keyboard_check_pressed(vk_enter) {
+        dialogue_start(d);
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="8" enumb="0">
       <action>
@@ -143,7 +246,9 @@ if (_debug) {
             <string>/// DEBUG ONLY
 
 if (_debug) {
-
+    draw_set_font(font_menu);
+    
+    
 }
 </string>
           </argument>
