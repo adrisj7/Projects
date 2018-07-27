@@ -51,14 +51,20 @@ return d;
 
 var d = argument0;
 
-if (instance_exists(d)) {
-    instance_activate_object(d);
+instance_activate_object(d);
+d._finished = false;
 
-    // Initialize all of our objects.
-    switch(id.object_index) {
-        case objDialogue:
-            // Do nothing, really.
-            d._finished = true;
-            break;
-    }
+// Initialize all of our objects.
+switch(d.object_index) {
+    case objDialogue:
+        // Do nothing, really.
+        d._finished = true;
+        break;
+    case objDialogueText:
+        // Start our text from 0
+        d._textIndex = 0;
+        break;
+    default:
+        show_error("DIALOGUE PROBLEM! You forgot to define the initialize action "
+        + " for the dialogue of object " + object_get_name(d.object_index) + ".", false);
 }

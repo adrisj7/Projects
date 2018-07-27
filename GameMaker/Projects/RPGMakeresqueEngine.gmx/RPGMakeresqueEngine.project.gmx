@@ -20,8 +20,12 @@
       <script>scripts\variable.gml</script>
       <script>scripts\tile.gml</script>
       <script>scripts\window.gml</script>
+      <script>scripts\input.gml</script>
     </scripts>
   </scripts>
+  <fonts name="fonts">
+    <font>fonts\font_menu</font>
+  </fonts>
   <objects name="objects">
     <object>objects\Gamestate</object>
     <objects name="Systems">
@@ -32,11 +36,14 @@
   <rooms name="rooms">
     <room>rooms\room0</room>
   </rooms>
-  <constants number="4">
+  <constants number="7">
     <constant name="WINDOW_TITLE">"RPG Story Engine"</constant>
+    <constant name="WINDOW_WIDTH">640</constant>
+    <constant name="WINDOW_HEIGHT">480</constant>
     <constant name="GAME_SPEED">60</constant>
     <constant name="VARIABLE_SYSTEM">global.variable_system</constant>
     <constant name="INVENTORY_SYSTEM">global.inventory_system</constant>
+    <constant name="INPUTS">global.inputs</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

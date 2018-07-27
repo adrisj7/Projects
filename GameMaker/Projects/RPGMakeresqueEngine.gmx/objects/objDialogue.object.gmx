@@ -53,7 +53,8 @@ _finished = false;
             <kind>1</kind>
             <string>/// If finished, move on to the next window.
 if (_finished) {
-    dialogue_start(_next);
+    if (_next != 0)
+        dialogue_start(_next);
     instance_deactivate_object(id);
 }
 </string>
