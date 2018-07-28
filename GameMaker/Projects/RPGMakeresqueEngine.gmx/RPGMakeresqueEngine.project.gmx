@@ -6,6 +6,7 @@
   <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites">
+    <sprite>sprites\sprScratchpad</sprite>
     <sprites name="GUI">
       <sprite>sprites\sprWindow</sprite>
     </sprites>
@@ -23,21 +24,34 @@
       <script>scripts\input.gml</script>
       <script>scripts\game_state.gml</script>
     </scripts>
+    <scripts name="math">
+      <script>scripts\curves.gml</script>
+      <script>scripts\mod2.gml</script>
+    </scripts>
+    <scripts name="misc">
+      <script>scripts\draw_sprite_part_tiled.gml</script>
+      <script>scripts\draw_reset.gml</script>
+      <script>scripts\parse_text_commands.gml</script>
+      <script>scripts\get_gui_scratchpad_surface.gml</script>
+    </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\font_menu</font>
+    <font>fonts\font_debug</font>
   </fonts>
   <objects name="objects">
     <objects name="Systems">
       <object>objects\Gamestate</object>
       <object>objects\objDialogue</object>
       <object>objects\objDialogueText</object>
+      <object>objects\objDialogueChoice</object>
     </objects>
   </objects>
   <rooms name="rooms">
     <room>rooms\room0</room>
+    <room>rooms\room1</room>
   </rooms>
-  <constants number="7">
+  <constants number="9">
     <constant name="WINDOW_TITLE">"RPG Story Engine"</constant>
     <constant name="WINDOW_WIDTH">640</constant>
     <constant name="WINDOW_HEIGHT">480</constant>
@@ -45,6 +59,8 @@
     <constant name="VARIABLE_SYSTEM">global.variable_system</constant>
     <constant name="INVENTORY_SYSTEM">global.inventory_system</constant>
     <constant name="INPUTS">global.inputs</constant>
+    <constant name="SURFACE_WINDOW_MIDDLE">global.window_middle_surface</constant>
+    <constant name="SURFACE_WINDOW">global.surface_window</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
