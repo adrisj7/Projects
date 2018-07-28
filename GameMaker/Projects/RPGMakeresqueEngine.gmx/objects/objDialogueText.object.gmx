@@ -41,17 +41,22 @@
             <kind>1</kind>
             <string>/// Dialogue variables
 
+// The full text, including commands.
+_rawText = "";
+
+// The text without commands
 _text = "";
+
 
 // Scroll Speeds (how fast it scrolls the text)
 // ex. 10 / GAME_SPEED is 10 characters per second
-_charSpeed =  20 / GAME_SPEED; // a-z / A-Z
-_spaceSpeed = 14 / GAME_SPEED;
-_commaSpeed = 8 / GAME_SPEED;
-_periodSpeed = 4 / GAME_SPEED;
+_charSpeed =   60 / GAME_SPEED; // a-z / A-Z
+_spaceSpeed =  60 / GAME_SPEED;
+_commaSpeed =  20 / GAME_SPEED;
+_periodSpeed = 12 / GAME_SPEED;
 
 // When we're speeding up (holding x or z was it?) by what scale?
-_speedUpFactor = 3;
+_speedUpFactor = 50; // TODO: Isn't this a bit excessive...
 </string>
           </argument>
         </arguments>
@@ -72,10 +77,60 @@ _speedUpFactor = 3;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Util variables
+            <string>/// Util variables and Transition variables
+
+
+// Map storing parsed text and command info
+_commandData = 0;
+
+// Which command is next up in line
+_commandIndex = 0;
 
 // How far in the text are we?
-_textIndex = 0;
+_textCounter = 0;
+
+// Are we speeding through the text?
+_speeding = false;
+
+// TRANSITION
+_transitionOpenDuration = 5;  // How long to open?
+_transitionCloseDuration = 8; // How long to close?
+_transitionCounter = 0;          // What state of transition are we in?
+
+
+// Floaty Next Icon Thing
+_floatyNextCounter = 0;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Effects
+
+enum DIALOGUE_TEXT_EFFECT {
+    NONE, // Default
+    WAIT, // Waiting for a period of time
+    NEXT, // Waiting for the player to press the action key
+};
+
+_effect = DIALOGUE_TEXT_EFFECT.NONE;
+_effect_wait_timer = 0;  // If we're waiting, move this down.
+_effect_speed_scale = 1; // We scale our speed by this
 </string>
           </argument>
         </arguments>
@@ -129,37 +184,169 @@ _max_text_width = _window_width - 2*_window_text_buffer;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// IsFinished and Scroll text
-if (_textIndex &gt;= string_length(_text)) {
-    if keyboard_check_pressed( input_get("action") ) {
-        _finished = true;
-    }
-} else {
+            <string>/// Transitions, if we need them.
 
-    // Skip the scrolling of the dialogue. TODO: Is this how it's done?
-    if keyboard_check_pressed( input_get("action") ) {
-        _textIndex = string_length(_text) - 1;
-    }
 
-    var currentChar = string_char_at(_text, floor(_textIndex));
-    var scrollSpeed = 0;
-    // Note: == works for string comparison in GMS.
-    if (currentChar == " ") {
-        scrollSpeed = _spaceSpeed;
-    } else if (currentChar == ",") {
-        scrollSpeed = _commaSpeed;
-    } else if (currentChar == ".") {
-        scrollSpeed = _periodSpeed;
+
+switch _state {
+    case DIALOGUE_STATE.OPENING:
+        var progress = _transitionCounter / _transitionOpenDuration;
+        if (progress &gt;= 1) {
+            _state = DIALOGUE_STATE.OPEN;
+        }
+        break;
+    case DIALOGUE_STATE.CLOSING:
+        var progress = _transitionCounter / _transitionCloseDuration;
+        if (progress &gt;= 1) {
+            _finished = true;
+        }
+        break;
+}
+_transitionCounter += game_get_dtime();
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// IsFinished, Effects, and Scroll text
+
+// Are we open and ready for text?
+if (_state == DIALOGUE_STATE.OPEN) {
+
+    // Are we at the end of our text?
+    if (_textCounter &gt;= string_length(_text)) {
+        _textCounter = string_length(_text); // Cap it off
+        if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back") ) {
+            // Start the closing animation if we're at the end. Otherwise, finish and move on.
+            if _end {
+                _state = DIALOGUE_STATE.CLOSING;
+                _transitionCounter = 0;
+            } else {
+                _finished = true;
+            }
+        }
     } else {
-        scrollSpeed = _charSpeed;
-    }
-    
-    // If we're speeding up the text
-    if keyboard_check( input_get("back")) {
-        scrollSpeed *= _speedUpFactor;
-    }
+        // Otherwise, continue scrolling!
 
-    _textIndex += scrollSpeed;
+        // Set scroll speed //
+        var currentChar = string_char_at(_text, floor(_textCounter));
+        var scrollSpeed = 0;
+        // Note: == works for string comparison in GMS.
+        switch currentChar {
+            case " ":
+                scrollSpeed = _spaceSpeed;
+                break;
+            case ",":
+                scrollSpeed = _commaSpeed;
+                break;
+            case ".":
+                scrollSpeed = _periodSpeed;
+                break;
+            default:
+                scrollSpeed = _charSpeed;
+        }
+
+        // SPEEDING CONTROLS //
+        // Prevents holding the "Z" key from carrying on from previous dialogue.
+        if keyboard_check_pressed( input_get("action")) {
+            _speeding = true;
+        }
+        if keyboard_check_released( input_get("action")) {
+            _speeding = false;
+        }
+
+        // EFFECT CONDITIONS //
+        switch _effect {
+            case DIALOGUE_TEXT_EFFECT.WAIT:
+                _effect_wait_timer--;
+                // Timeout
+                if (_effect_wait_timer &lt;= 0) {
+                    _effect = DIALOGUE_TEXT_EFFECT.NONE;
+                } else {
+                    scrollSpeed = 0;
+                }
+                break;
+            case DIALOGUE_TEXT_EFFECT.NEXT:
+                if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back")) {
+                    _effect = DIALOGUE_TEXT_EFFECT.NONE;   
+                    _speeding = false;      // Prevent speeding on start    
+                    _floatyNextCounter = 0; // Hide this        
+                } else {
+                    scrollSpeed = 0;
+                }
+                break;                
+        }
+
+        // If we're speeding up //
+        if _speeding {
+            scrollSpeed *= _speedUpFactor;    
+        }
+
+        // Actually move the counter //
+        _textCounter += scrollSpeed * _effect_speed_scale * game_get_dtime();
+
+        // PARSE COMMANDS //
+        if _effect == DIALOGUE_TEXT_EFFECT.NONE {
+            // Where in text is our next command?
+            var cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
+            //show_debug_message("index: " + string(cindex));
+            // While we still have commands to execute:
+            while(_textCounter + 1 &gt;= cindex) { // + 1 because of off-by-one errors
+                if (cindex == -1) {
+                    // We have no more commands
+                    break;
+                }
+                // Move our text counter to the command in question
+                _textCounter = cindex - 1; // Off by 1
+                //_scrollSpeed = 0;
+
+                parse_text_commands_execute_command(_commandData, _commandIndex);
+                _commandIndex++;
+                cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
+            }
+        }
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Floaty next counter
+
+if (_effect == DIALOGUE_TEXT_EFFECT.NEXT || _textCounter &gt;= string_length(_text)) {
+    _floatyNextCounter += game_get_dtime();
 }
 </string>
           </argument>
@@ -197,10 +384,54 @@ if (_textIndex &gt;= string_length(_text)) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Draw window
+            <string>/// Draw window with transitions
 
+draw_reset();
 
-draw_window(_window_xpos, _window_ypos, _window_width, _window_height);
+d3d_transform_stack_push();
+
+// If we're opening or closing, apply some magic effects.
+switch _state {
+    case DIALOGUE_STATE.OPENING:
+        //var progress = _transitionCounter / _transitionOpenDuration;
+        
+        var cubeCurve = curve_up_poly(_transitionCounter, _transitionOpenDuration, 0.3);
+        var sqrCurve =  curve_up_poly(_transitionCounter, _transitionOpenDuration, 2);
+
+        // Center the window for scaling
+        d3d_transform_add_translation(0, -_window_height/2, 0);
+        d3d_transform_add_scaling(1, cubeCurve, 1);
+        // DeCenter the window
+        d3d_transform_add_translation(0, _window_height/2, 0);
+
+        // Alpha to the mix
+        draw_set_alpha(sqrCurve);
+        break;
+
+    case DIALOGUE_STATE.CLOSING:
+        //var progress = _transitionCounter / _transitionCloseDuration;
+        
+        var cubeCurve = curve_down_poly(_transitionCounter, _transitionCloseDuration, 0.3);   //1 - power(progress, 0.3);
+
+        // Center the window for scaling
+        d3d_transform_add_translation(0, -_window_height/2, 0);
+        d3d_transform_add_scaling(1, cubeCurve, 1);
+        // DeCenter the window
+        d3d_transform_add_translation(0, _window_height/2, 0);
+
+        // Alpha to the mix
+        draw_set_alpha(cubeCurve);
+        break;
+}
+
+var realAlpha = draw_get_alpha();
+draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
+
+d3d_transform_add_translation(_window_xpos, _window_ypos, 0);
+draw_window(0, 0, _window_width, _window_height, draw_get_alpha());
+
+d3d_transform_stack_pop();
+
 </string>
           </argument>
         </arguments>
@@ -221,20 +452,92 @@ draw_window(_window_xpos, _window_ypos, _window_width, _window_height);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Draw text
+            <string>/// Draw window text
 
-draw_set_font(font_menu);
 
-var substring = string_copy(_text, 0, _textIndex);
-//show_debug_message(substring);
+if (_state == DIALOGUE_STATE.OPEN) {
+    draw_set_font(font_menu);
+    draw_reset();
+    draw_set_color(c_white);
 
-draw_text_ext(
-        _window_xpos + _window_text_buffer, 
-        _window_ypos + _window_text_buffer,
-        substring,
-        3 + font_get_size(font_menu),
-        _max_text_width
-);
+    var substring = string_copy(_text, 0, _textCounter + 1);
+
+    draw_text_ext(
+            _window_xpos + _window_text_buffer, 
+            _window_ypos + _window_text_buffer,
+            substring,
+            3 + font_get_size(font_menu),
+            _max_text_width
+    );
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw floaty next counter
+
+if (_state == DIALOGUE_STATE.OPEN &amp;&amp; _floatyNextCounter &gt; 0) {
+    var floatyNextCounterOpenTime = 10; // How long it takes to fade in
+    var deltaHeight = curve_triangle(_floatyNextCounter, 70, 1);
+
+    /// Pixelify the delta Height
+    deltaHeight = 2 * round(deltaHeight); 
+
+    draw_set_alpha(min(1, _floatyNextCounter / floatyNextCounterOpenTime));
+
+    draw_window_floaty_next(WINDOW_WIDTH / 2, _window_ypos + _window_height + deltaHeight - 10);
+    
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// DEBUG
+
+if game_is_debug_overlay() {
+    draw_set_font(font_debug);
+
+    draw_reset();
+
+    draw_text(10, 10+11*0, "Text:                " + _text);
+    draw_text(10, 10+11*3, "Text Progress:       " + string(floor(_textCounter)) + " / " +  string(string_length(_text)));
+    draw_text(10, 10+11*4, "Transition Progress: " + string(_transitionCounter));
+    draw_text(10, 10+11*5, "Transition State:    " + string(_state));
+    draw_text(10, 10+11*6, "Start?               " + string(_start));
+    draw_text(10, 10+11*7, "End?                 " + string(_end));
+}
 </string>
           </argument>
         </arguments>
