@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>objDialogue</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -22,6 +22,29 @@
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Override
+_transitionOpenDuration = 10;  // How long to open?
+_transitionCloseDuration = 15; // How long to close?
+</string>
+          </argument>
+        </arguments>
       </action>
       <action>
         <libid>1</libid>
@@ -71,7 +94,314 @@ _option_count = 0;
             <kind>1</kind>
             <string>/// Util
 
+// index of the option we selected
 _selected = 0;
+
+// The key we pass after making a selection.
+_key = "";
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Window variables
+
+// Constants
+_window_min_width = 100;
+_window_min_height = 100;
+_window_text_buffer = 12;
+_window_center_ypos = WINDOW_HEIGHT/2 - 24;
+
+// SET THESE in the constructor (dialogue_choice_create... )
+_window_xpos = -1;
+_window_ypos = -1;
+_window_width = -1;
+_window_height = -1;
+
+_top_text_height = -1;
+_max_text_width = -1;//_window_width - 2*_window_text_buffer;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="3" enumb="1">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Scroll
+
+if keyboard_check_pressed( input_get("down") ) {
+    _selected++;
+}
+if keyboard_check_pressed( input_get("up") ) {
+    _selected--;
+}
+
+// Wrap selected
+_selected = wrap(_selected, 0, _option_count);
+
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Select
+
+if _state == DIALOGUE_STATE.OPEN &amp;&amp; keyboard_check_pressed( input_get("action") ) {
+    _state = DIALOGUE_STATE.CLOSING;
+    _transitionCounter = 0;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>604</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_inherited</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// after finished, act upon our choices!
+
+if _finished {
+    parse_choice(_key, _selected);
+    //show_message("Selected option: " + _options[_selected]);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw window with transition
+
+
+draw_reset();
+
+d3d_transform_stack_push();
+d3d_transform_set_identity();
+
+// If we're opening or closing, apply some magic effects.
+switch _state {
+    case DIALOGUE_STATE.OPENING:
+        //var progress = _transitionCounter / _transitionOpenDuration;
+
+        var cubeCurve = curve_up_poly(_transitionCounter, _transitionOpenDuration, 0.3);
+        var sqrCurve =  curve_up_poly(_transitionCounter, _transitionOpenDuration, 2);
+
+        // Center the window for scaling
+        d3d_transform_add_translation(0, -_window_height/2, 0);
+        d3d_transform_add_scaling(1, cubeCurve, 1);
+        // DeCenter the window
+        d3d_transform_add_translation(0, _window_height/2, 0);
+
+        // Alpha to the mix
+        draw_set_alpha(sqrCurve);
+        break;
+
+    case DIALOGUE_STATE.CLOSING:
+        //var progress = _transitionCounter / _transitionCloseDuration;
+        
+        var cubeCurve = curve_down_poly(_transitionCounter, _transitionCloseDuration, 0.3);   //1 - power(progress, 0.3);
+
+        // Center the window for scaling
+        d3d_transform_add_translation(0, -_window_height/2, 0);
+        d3d_transform_add_scaling(1, cubeCurve, 1);
+        // DeCenter the window
+        d3d_transform_add_translation(0, _window_height/2, 0);
+
+        // Alpha to the mix
+        draw_set_alpha(cubeCurve);
+        break;
+}
+
+var realAlpha = draw_get_alpha();
+draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
+
+d3d_transform_add_translation(_window_xpos, _window_ypos, 0);
+
+draw_window(0, 0, _window_width, _window_height, draw_get_alpha());
+
+d3d_transform_stack_pop();
+
+// Debug delete me
+//draw_rectangle(_window_xpos, _window_ypos, _window_xpos + _window_width, _window_ypos + _window_height, true);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw text and choices
+
+if (_state == DIALOGUE_STATE.OPEN) {
+    draw_set_font(font_menu);
+    draw_reset();
+    draw_set_color(c_white);
+
+    // Draw Top Text
+    draw_text_ext(
+            _window_xpos + _window_text_buffer, 
+            _window_ypos + _window_text_buffer,
+            _text,
+            3 + font_get_size(font_menu),
+            _max_text_width
+    );
+
+    // Draw Choices
+    draw_set_halign(fa_middle);
+    for(var i = 0; i &lt; _option_count; i++) {
+        var ypos = _window_ypos + _window_text_buffer + _top_text_height + i*(10 + font_get_size(font_menu));
+        draw_text(
+            _window_xpos + _window_width / 2,
+            ypos,
+            _options[i]
+        );
+
+        // Draw selector
+        if (_selected == i) {
+            var sbuffer = 8;
+            var sx = _window_xpos + _window_text_buffer - sbuffer;
+            var sy = ypos;// - font_get_size(font_menu)/2 - sbuffer;
+            var sw = _window_width - 2*_window_text_buffer + 2*sbuffer;
+            var sh = font_get_size(font_menu) + 2*sbuffer;
+            draw_window_selector(sx, sy, sw, sh, 1);
+        }
+    }
+    draw_set_halign(fa_left);
+
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// DEBUG
+
+if game_is_debug_overlay() {
+    draw_set_font(font_debug);
+
+    draw_reset();
+
+    draw_text(10, 10+11*0, "Top Text:          " + _text);
+    draw_text(10, 10+11*2, "Key :              " + _key);
+    draw_text(10, 10+11*3, "Choice Index       " + string(_selected));
+    draw_text(10, 10+11*4, "Transition State:  " + string(_state));
+}
 </string>
           </argument>
         </arguments>

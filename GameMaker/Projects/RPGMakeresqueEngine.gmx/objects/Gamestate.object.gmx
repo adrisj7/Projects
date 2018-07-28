@@ -192,6 +192,28 @@ SURFACE_WINDOW[1] = -1;
       </action>
       <action>
         <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// CONTAINERS
+CHOICE_MISC_CONTAINER = noone;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
         <id>222</id>
         <kind>0</kind>
         <userelative>0</userelative>
@@ -224,9 +246,12 @@ SURFACE_WINDOW[1] = -1;
 
 if game_is_debug() {
     d = dialogue_create();
-    var text = dialogue_text_create("Bugs have taken up &lt;speed 0.2&gt;residence&lt;speed 1&gt; in this&lt;wait 40&gt; rotten&lt;wait 40&gt; log.", 
-                                    "&lt;skip&gt;Black Cat:&lt;/skip&gt;#So I decided &lt;speed 1&gt;to follow you up for laughs.&lt;next&gt;#Incidentally, where the heck'd you come from?");
-    dialogue_set_next(d, text);
+    var pretext = dialogue_text_create("You find a rusty machete on the ground.", "Pick it up?");
+    var choice = dialogue_choice_create("pick_machete", "", "Pick it up", "Throw it in a lake", "Don't");
+    dialogue_set_next(d, pretext, choice);
+//    var text = dialogue_text_create("Bugs have taken up &lt;speed 0.2&gt;residence&lt;speed 1&gt; in this&lt;wait 40&gt; rotten&lt;wait 40&gt; log.", 
+//                                    "&lt;skip&gt;Black Cat:&lt;/skip&gt;#So I decided &lt;speed 1&gt;to follow you up for laughs.&lt;next&gt;#Incidentally, where the heck'd you come from?");
+//    dialogue_set_next(d, text);
 }
 
 </string>
@@ -347,7 +372,7 @@ if game_is_debug() {
           <argument>
             <kind>1</kind>
             <string>/// Reactivate dialogues
-instance_activate_object(objDialogue);
+dialogue_activate(objDialogue);
 </string>
           </argument>
         </arguments>
@@ -371,7 +396,7 @@ instance_activate_object(objDialogue);
           <argument>
             <kind>1</kind>
             <string>/// Deactivate dialogues....
-instance_deactivate_object(objDialogue);
+dialogue_deactivate(objDialogue);
 </string>
           </argument>
         </arguments>
@@ -437,7 +462,7 @@ if game_is_debug() {
         draw_text(0, WINDOW_HEIGHT - 12, "Debug Overlay (F3): ON");
     } else {
         draw_set_color(c_ltgray);
-        draw_text(0, WINDOW_HEIGHT - 12, "Debug Overlay (F3): OFF");
+        draw_text(0, WINDOW_HEIGHT - 12, "(F3): OFF");
     }
     
 }

@@ -54,4 +54,4 @@ variable_set_ext(VARIABLE_SYSTEM, key, value);
 
 var key   = argument0;
 
-variable_get_ext(VARIABLE_SYSTEM, key);
+return variable_get_ext(VARIABLE_SYSTEM, key);
