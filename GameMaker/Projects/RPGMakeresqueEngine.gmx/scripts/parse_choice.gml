@@ -47,7 +47,6 @@ with (CHOICE_MISC_CONTAINER) {
                     dialogue_start(macheteDialogue1_2);
                     variable_set("machete throw away", true);
                     break;
-                break;
             }
             break;
 
