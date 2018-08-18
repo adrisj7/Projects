@@ -3,7 +3,7 @@
 var key = argument0;
 
 var fpath = objDialogueEditorCodeEditor._codeFilePath;
-var notepadPath = "C:\Program Files\Notepad++\notepad++.exe";
+var notepadPath = objDialogueEditorCodeEditor._notepadPath;
 
 if !objDialogueEditorCodeEditor._unsandboxed {
     show_message('Script file "' + fpath + '"is sandboxed. Please open it up once so we can edit it');

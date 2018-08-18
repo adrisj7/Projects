@@ -139,8 +139,17 @@
         <sprite>sprites\sprDialogueEditorOrigin</sprite>
       </sprites>
     </sprites>
+    <sprites name="Characters">
+      <sprite>sprites\sprExampleCharsheet</sprite>
+    </sprites>
+    <sprites name="Masks">
+      <sprite>sprites\maskPlayerFeet</sprite>
+    </sprites>
   </sprites>
-  <backgrounds name="background"/>
+  <backgrounds name="background">
+    <background>background\bgExampleWalls</background>
+    <background>background\bgExampleFloor</background>
+  </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
     <scripts name="Systems">
@@ -204,6 +213,10 @@
     <font>fonts\font_debug</font>
   </fonts>
   <objects name="objects">
+    <objects name="Entities">
+      <object>objects\objCharacter</object>
+      <object>objects\objPlayer</object>
+    </objects>
     <objects name="Systems">
       <object>objects\Gamestate</object>
       <objects name="Dialogue">
@@ -228,9 +241,7 @@
       <object>objects\objDialogueEditorCode</object>
       <object>objects\objDialogueEditorNewElement</object>
     </objects>
-    <objects name="ExecuteShell">
-      <object>objects\obj_example</object>
-    </objects>
+    <object>objects\objTilesetEditor</object>
   </objects>
   <timelines name="timelines">
     <timeline>timelines\timelinetemp</timeline>
@@ -240,7 +251,7 @@
     <room>rooms\room1</room>
     <room>rooms\roomDialogueEditor</room>
   </rooms>
-  <constants number="11">
+  <constants number="13">
     <constant name="WINDOW_TITLE">"RPG Story Engine"</constant>
     <constant name="WINDOW_WIDTH">640</constant>
     <constant name="WINDOW_HEIGHT">480</constant>
@@ -252,6 +263,8 @@
     <constant name="SURFACE_WINDOW_MIDDLE">global.window_middle_surface</constant>
     <constant name="SURFACE_WINDOW">global.surface_window</constant>
     <constant name="CHOICE_MISC_CONTAINER">global.choice_container</constant>
+    <constant name="TILE_WIDTH">32</constant>
+    <constant name="TILE_HEIGHT">32</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
