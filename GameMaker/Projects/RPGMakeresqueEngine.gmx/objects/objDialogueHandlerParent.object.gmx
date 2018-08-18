@@ -27,15 +27,6 @@
             <kind>1</kind>
             <string>/// Dialogue variables
 
-// The next dialogue box. Once this one is done, start the next one.
-_next = noone;
-
-// Is this the first/last dialogue in the sequence?
-// (Used for opening, closing and transition animations)
-_start = true;
-_end = true;
-
-
 // Dialogue state. Used for transitions.
 // (Used for opening, closing and transition animations)
 enum DIALOGUE_STATE {
@@ -74,7 +65,10 @@ _transitionCounter = 0;          // What state of transition are we in?
             <kind>1</kind>
             <string>/// Util
 
-// Are we finished? If true, move on to the next dialogue.
+// Are we active and running?
+_active = false;
+
+// Are we finished? If true, finish and move on to the next dialogue
 _finished = false;
 
 </string>
@@ -99,34 +93,58 @@ _finished = false;
         <arguments>
           <argument>
             <kind>1</kind>
+            <string>/// visible = _active;
+visible = _active;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
             <string>/// Transitions, if we need them.
 
 
-switch _state {
-    case DIALOGUE_STATE.OPENING:
-        var progress;
-        if (_transitionOpenDuration == 0) {
-            progress = 1;    
-        } else {
-            progress = _transitionCounter / _transitionOpenDuration;
-        }
-        if (progress &gt;= 1) {
-            _state = DIALOGUE_STATE.OPEN;
-        }
-        break;
-    case DIALOGUE_STATE.CLOSING:
-        var progress;
-        if (_transitionCloseDuration == 0) {
-            progress = 1;    
-        } else {
-            progress = _transitionCounter / _transitionCloseDuration;
-        }
-        if (progress &gt;= 1) {
-            _finished = true;
-        }
-        break;
+if (_active) {
+    switch _state {
+        case DIALOGUE_STATE.OPENING:
+            var progress;
+            if (_transitionOpenDuration == 0) {
+                progress = 1;    
+            } else {
+                progress = _transitionCounter / _transitionOpenDuration;
+            }
+            if (progress &gt;= 1) {
+                _state = DIALOGUE_STATE.OPEN;
+            }
+            break;
+        case DIALOGUE_STATE.CLOSING:
+            var progress;
+            if (_transitionCloseDuration == 0) {
+                progress = 1;    
+            } else {
+                progress = _transitionCounter / _transitionCloseDuration;
+            }
+            if (progress &gt;= 1) {
+                _finished = true;
+            }
+            break;
+    }
+    _transitionCounter += game_get_dtime();
 }
-_transitionCounter += game_get_dtime();
 </string>
           </argument>
         </arguments>
@@ -148,11 +166,11 @@ _transitionCounter += game_get_dtime();
           <argument>
             <kind>1</kind>
             <string>/// If finished, move on to the next window.
-if _finished {
-    if _next != noone {
-        dialogue_start(_next);
+
+if (_active) {
+    if _finished {
+        dialogue_system_next();
     }
-    instance_deactivate_object(id);
 }
 </string>
           </argument>

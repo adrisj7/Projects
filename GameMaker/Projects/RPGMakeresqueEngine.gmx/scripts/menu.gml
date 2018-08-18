@@ -13,7 +13,7 @@
 
 #define menu_open
 /// menu_open(menu);
-// Opens a menu
+// Opens the menu
 
 #define menu_close
 /// menu_close(menu);

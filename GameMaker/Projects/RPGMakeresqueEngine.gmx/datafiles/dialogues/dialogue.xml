@@ -1,0 +1,14 @@
+<dialogues>
+    <dialogue>
+        <id>Dialogue 1</id>
+        <text>Hello, this is some text. How do you do?</text>
+        <text>[skip]Narrator:[/skip]#This also supports [speed 0.2]commands[speed 1].[next]#Ain't that cool?</text>
+        <choice>
+            <caption>Proceed?</caption>
+            <option>Yes</option>
+            <option>No</option>
+        </choice>
+    </cialogue>
+
+
+</dialogues>

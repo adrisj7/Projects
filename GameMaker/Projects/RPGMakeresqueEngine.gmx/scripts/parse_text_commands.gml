@@ -89,8 +89,9 @@ ds_map_add_list(result, "commands", commands);
 return result;
 
 #define string_search
-/// string_search(string, startIndex, token);
+/// string_search(string, startIndex, substring);
 // Searches for a token within a string, returning the index of the first letter the token was found in.
+// If no string was found, returns -1.
 
 var str   = argument0,
     start = argument1,
