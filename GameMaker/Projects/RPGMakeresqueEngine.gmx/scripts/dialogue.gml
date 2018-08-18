@@ -10,118 +10,160 @@
  *
  */
 
-#define dialogue_create
-/// dialogue_create();
-// Creates a dialogue object. It does not start the dialogue in game.
+#define load_dialogue_file
+/// load_dialogue_file(dialogueName);
+// Loads a dialogue file, returning a map of dialogues.
 
-var d = instance_create(0, 0, objDialogue);
+var fname = working_directory + "" + argument0 + ".json";
 
-dialogue_deactivate(d);
-//instance_deactivate_object(d);
+// The file containing our dialogue
+var file = file_text_open_read(fname);
+if (file == -1) {
+    show_error("Dialogue File reading problem: Unable to read dialogue file at " + fname + ".", false);
+}
 
-return d;
+// Read file text
+var text = file_text_read_string_full(file);
+file_text_close(file);
 
-#define dialogue_set_next
-/// dialogue_set_next(dialogue, next...);
-// Sets the next dialogue of a dialogue.
-// Once the first dialogue is finished, the next one is started.
+// Parse the text json
+var dmap = json_decode(text);
+if (dmap == -1) {
+    show_error("Dialogue file reading problem: Unable to parse json!", false);
+}
 
-// You can chain these together. For instance:
-// dialogue_set_next(start, 2nd, 3rd, 4th, ....);
+// Return the "root" of all dialogues
+return dmap[? "dialogues"];
 
-var d = argument[0];
+#define dialogue_file_start_dialogue
+///dialogue_file_start_dialogue(dialogue_file, dialogue_id);
+// Each dialogue has an ID, which is the same thing as the key of the dialogue in the json file.
+// This function passes through a dialogue file and said ID/key, and starts said dialogue.
 
-var prev = d;
-for(var i = 1; i < argument_count; i++) {
-    var current = argument[i];
-    prev._next = current;
+// A dialogue consists of a full "cutscene". This includes text messages, choices, ect. that are opened in sequence.
 
-    // Update start and end for the current dialogue and the next.
-    if (prev.object_index == objDialogueText && current.object_index == objDialogueText) {
-        prev._end = false;
-        current._start = false;
+var dialogue_file = argument0,
+    dialogue_id   = argument1;
+
+// A sequence of all the dialogue "windows" in this dialogue
+var dialogueSequence = dialogue_file[? dialogue_id];
+
+// Initialize / Reset our dialogue handler
+with (DIALOGUE_SYSTEM) {
+    _dialogueSequence = dialogueSequence;
+    _dialogueID = dialogue_id;
+    _dialogueFile = dialogue_file;
+    _dialogueIndex = 0;
+    _dialogueCount = ds_list_size(dialogueSequence);
+}
+
+dialogue_system_next();
+
+#define dialogue_system_next
+///dialogue_system_next();
+// Finishes the current dialogue and starts our next one
+
+with (DIALOGUE_SYSTEM) {
+
+    // Make our dialogue handlers inactive for now:
+    _textHandler._active = false;
+    //_choiceHandler._active = false;
+
+    // If we're done
+    if (_dialogueIndex >= _dialogueCount) {
+        // Let the game know we're out of dialogue!
+        return 0;
     }
 
-    // Make sure we extend off of any dialogue chains, instead of interrupting them!
-    prev = dialogue_get_last(current);//current;
-}
+    // The window data that we're currently reading from.
+    var currentWindow = _dialogueSequence[| _dialogueIndex];
+    var type = currentWindow[? "type"];
+    switch(type) {
+        case "text":
+            // Initialize our dialogue text handler
+            with (_textHandler) {
+                _active = true;                                      // Make sure we're visible.
+                _paused = false;                                     // Not paused (only paused during a choice menu)
+                _finished = false;                                   // We start un-finished
+                _transitionCounter = 0;                              // Start our transition from zero
+                if (DIALOGUE_SYSTEM._dialogueIndex == 0) {           // Set our opening state, depending on whether we're at the start
+                    _state = DIALOGUE_STATE.OPENING;
+                } else {
+                    _state = DIALOGUE_STATE.OPEN;
+                }
+                _end = false;
+                if DIALOGUE_SYSTEM._dialogueIndex == DIALOGUE_SYSTEM._dialogueCount - 1 { // Should our text window close with an animation?
+                    _end = true;
+                } else {
+                    var nextWindow = DIALOGUE_SYSTEM._dialogueSequence[| DIALOGUE_SYSTEM._dialogueIndex + 1];
+                    var nextType = nextWindow[? "type"];
+                    if nextType != "text" {
+                        _end = true;
+                    }
+                }
+                _rawText = currentWindow[? "text"];                  // Update raw text
+                _commandData = parse_text_commands(_rawText);        // Parse command data
+                _text = parse_text_commands_get_text(_commandData);  // Update real text
+                _textCounter = 0;                                    // Start our text from 0
+                _commandIndex = 0;                                   // Start from the 0th command
+                _speeding = false;                                   // We're never speeding from the start
+                _floatyNextCounter = 0;                              // Make sure our floaty transition starts properly
 
-return d;
-
-/*
-var d    = argument[0];
-    next = argument1;
-
-
-// Update start and end for the current dialogue and the next.
-if (d.object_index == objDialogueText && next.object_index == objDialogueText) {
-    d._end = false;
-    next._start = false;
-}
-
-d._next = next;
-
-return d;
-*/
-
-#define dialogue_text_create
-/// dialogue_text_create(...);
-// Creates a dialogue text window
-
-
-if (argument_count == 0) {
-    show_error("DIALOGUE TEXT PROBLEM: You gave in no text arguments!", false);
-}
-
-var d0;
-var prevD;
-
-for(var i = 0; i < argument_count; i++) {
-    var d = instance_create(0, 0, objDialogueText);
-    if (i == 0) {
-        d0 = d;
-    } else {
-        dialogue_set_next(prevD, d);
+            }
+            break;
+        case "choice":
+            // Initialize our dialogue choice handler
+            with (_choiceHandler) {
+                _dialogueFile = DIALOGUE_SYSTEM._dialogueFile;
+                _active = true;
+                _finished = false;                                   // We start unfinished
+                _transitionCounter = 0;                              // Start our transition from zero
+                _state = DIALOGUE_STATE.OPENING;                     // We start opening!
+                _selected = 0;                                       // Our selection starts on the first object
+                _text = currentWindow[? "text"];                     // The text above our choices
+                _choices = currentWindow[? "choices"];               // Our choices
+                _targets = currentWindow[? "targets"];               // Our dialogue targets
+                _choices_count = ds_list_size(_choices);             // How many choices we have
+                dialogue_choice_set_dimensions(_text, _choices);     // Configure the dimensions (size and position) of our choice handler
+            }
+            break;
+        case "code":
+            var key = currentWindow[? "key"];
+            parse_choice(key);
+            break;
+        default:
+            show_error('DIALOGUE SYSTEM PROBLEM: Invalid dialogue type: "' + type + '".', false);
+            break;
     }
 
-    var text = argument[i];
-    d._rawText = text;
-    d._commandData = parse_text_commands(text);
-    d._text = parse_text_commands_get_text(d._commandData);
-
-    
-    dialogue_deactivate(d);
-    
-    prevD = d;
+    _dialogueIndex++;
 }
 
-return d0;
+return 0;
 
-#define dialogue_choice_create
-/// dialogue_choice_create(key, text, ...);
+#define dialogue_system_create
+/// dialogue_system_create();
+return instance_create(0, 0, objDialogueHandler);
+#define dialogue_choice_set_dimensions
+///dialogue_choice_set_dimensions(text, options);
+// Configure the dimensions of our dialogue choice window handler.
+// This automatically wraps the size to the text and the choices, leaving some buffer room.
 
-// Create a dialogue choice.
-// The key is used to determine how to handle the dialogue choices.
-// The extra arguments
+var text = argument0,
+    options = argument1;
 
-var key = argument[0];
-var text = argument[1];
-
+// The choice handler
+var d = DIALOGUE_SYSTEM._choiceHandler;
+    
 // TODO: Is this necessary for calculations? It should be...
 draw_set_font(font_menu);
 
 // Max width of the characters
 var maxWidth = 0;
 
-var d = instance_create(0, 0, objDialogueChoice);
-
-d._text = text;
-d._key = key;
-d._option_count = argument_count - 2;
-for(var i = 0; i < d._option_count; i++) {
-    var choice = argument[i + 2];
-    d._options[i] = choice;
-
+var optioncount = ds_list_size(options);
+for(var i = 0; i < optioncount; i++) {
+    var choice = options[| i];
     var w = string_width(choice);
     if w > maxWidth {
         maxWidth = w;
@@ -141,7 +183,7 @@ var textHeight = string_height_ext(
 // Our text width plus the buffer on both sides is our window width
 var windowWidth =  windowTextWidth + 2*d._window_text_buffer;
 // buffer + Text at the top + buffer + Options + buffer
-var windowHeight = textHeight + (font_get_size(font_menu) + 10)*d._option_count + 3*d._window_text_buffer;
+var windowHeight = textHeight + (font_get_size(font_menu) + 10)*optioncount + 3*d._window_text_buffer;
 
 var windowX = WINDOW_WIDTH / 2 - windowWidth / 2;
 var windowY = d._window_center_ypos - windowHeight / 2;
@@ -153,73 +195,4 @@ d._window_height = windowHeight;
 d._max_text_width = windowTextWidth;
 d._top_text_height = textHeight;
 
-dialogue_deactivate(d);
-
 return d;
-
-#define dialogue_start
-/// dialogue_start(dialogue);
-// Starts a dialogue in game, opening a window and stuff.
-
-var d = argument0;
-
-dialogue_activate(d);
-
-// Default constructor. 
-d._finished = false; // We're not finished
-d._state = DIALOGUE_STATE.OPENING; // we start at the OPENING stage.
-d._transitionCounter = 0; // Start our transition from zero.
-
-// Initialize all of our objects.
-switch(d.object_index) {
-
-    case objDialogue:
-        // Do nothing, really. Just open the next dialogue immediately
-        d._finished = true;
-        break;
-
-    case objDialogueText:
-        d._textCounter = 0;       // Start our text from 0
-        d._commandIndex = 0;      // Start from our first command
-        d._speeding = false;      // You can't start speeding immediately
-        d._floatyNextCounter = 0; // Make sure that the floaty next transition starts properly!
-        // Don't re-open
-        if (!d._start) {
-            d._state = DIALOGUE_STATE.OPEN;
-        }
-        break;
-
-    case objDialogueChoice:
-        d._selected = 0;
-        break;
-
-    default:
-        show_error("DIALOGUE PROBLEM! You forgot to define the initialize action "
-        + " for the dialogue of object " + object_get_name(d.object_index) + ".", false);
-}
-
-#define dialogue_deactivate
-/// dialogue_deactivate(dialogue);
-var d = argument0;
-
-instance_deactivate_object(d);
-
-#define dialogue_activate
-/// dialogue_activate(dialogue);
-var d = argument0;
-
-instance_activate_object(d);
-
-#define dialogue_get_last
-/// dialogue_get_last(root);
-// Gets the last dialogue in a dialogue chain
-
-var root = argument0;
-
-var last = root;
-
-while(last._next != noone) {
-    last = last._next;
-}
-
-return last;

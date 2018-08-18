@@ -1,10 +1,14 @@
-#define window
-/** WINDOW
- *
- *
- *    Purely visual.
- *
- */
+#define draw_window
+/// draw_window(x, y, width, height, alpha);
+// Standard window drawing
+
+var xa = argument0,
+    ya = argument1,
+    w  = argument2,
+    h  = argument3,
+    a  = argument4;
+
+draw_window_ext(sprWindow, 0, 0, 0, 32, 32, SURFACE_WINDOW_MIDDLE, 8, xa, ya, w, h, a);
 
 #define draw_window_ext
 /// draw_window_ext( sprite, subimg, left, top, spritewidth, spriteheight, midsurface, corner_size, x, y, windowwidth, windowheight, alpha);
@@ -24,11 +28,6 @@ var sprite  = argument0,
     winh    = argument11,
     alpha   = argument12;
 
-
-//if true || !surface_exists(surface) {
-
-    //SURFACE_WINDOW = surface_create(winw, winh);
-
 surface_set_target(get_gui_scratchpad_surface(0));
 
 d3d_transform_stack_push();
@@ -46,6 +45,11 @@ var color = draw_get_color();
 var midscale = (winw - 2*corner) / (sprw - 2*corner);
 // Middle left and right
 var sidescale = (winh - 2*corner) / (sprh - 2*corner);
+
+// Middle Middle
+if surface_exists(midsurf) {
+    draw_surface_part(midsurf, 0, 0, winw, winh, 0, 0);
+}
 
 // Top Left Corner
 draw_sprite_part_ext(sprite, subimg, left, top, corner, corner, 0, 0, 1, 1, color, a);
@@ -69,28 +73,14 @@ draw_sprite_part_tiled(sprite, subimg, left + sprw - corner, top + corner, corne
 draw_sprite_part_tiled(sprite, subimg, left + corner, top + sprh - corner, sprw - 2*corner, corner, winw - corner*2, corner, corner, winh - corner);
 //draw_sprite_part_ext(sprite, subimg, left + corner, top + sprh - corner, sprw - 2*corner, corner, corner, winh - corner, midscale, 1, color, a);
 
-// Middle Middle
-if surface_exists(midsurf) {
-    draw_surface_part(midsurf, corner, corner, winw - corner*2, winh - corner*2, corner, corner);
-}
 
 surface_reset_target();
 d3d_transform_stack_pop();
-//}
 
+// Draw the actual window from the surface
+shader_set(shaderWindow);
 draw_surface_part_ext(get_gui_scratchpad_surface(0), 0, 0, winw, winh, xa, ya, 1, 1, c_white, alpha);
-
-#define draw_window
-/// draw_window(x, y, width, height, alpha);
-// Standard window drawing
-
-var xa = argument0,
-    ya = argument1,
-    w  = argument2,
-    h  = argument3,
-    a  = argument4;
-
-draw_window_ext(sprWindow, 0, 0, 0, 32, 32, SURFACE_WINDOW_MIDDLE, 8, xa, ya, w, h, a);
+shader_reset();
 
 #define draw_window_floaty_next
 /// draw_window_floaty_next(x, y);

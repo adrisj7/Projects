@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>-1</persistent>
-  <parentName>objDialogue</parentName>
+  <parentName>objDialogueHandlerParent</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -102,6 +102,8 @@ _speedUpFactor = 50; // TODO: Isn't this a bit excessive...
             <kind>1</kind>
             <string>/// Util variables and Transition variables
 
+// Are we paused? (only happens during choices)
+_paused = false;
 
 // Map storing parsed text and command info
 _commandData = 0;
@@ -115,6 +117,8 @@ _textCounter = 0;
 // Are we speeding through the text?
 _speeding = false;
 
+// Are we at the end of our dialogue?
+_end = false;
 
 // Floaty Next Icon Thing
 _floatyNextCounter = 0;
@@ -203,100 +207,101 @@ _max_text_width = _window_width - 2*_window_text_buffer;
           <argument>
             <kind>1</kind>
             <string>/// IsFinished, Effects, and Scroll text
-
-// Are we open and ready for text?
-if (_state == DIALOGUE_STATE.OPEN) {
-
-    // Are we at the end of our text?
-    if (_textCounter &gt;= string_length(_text)) {
-        _textCounter = string_length(_text); // Cap it off
-        if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back") ) {
-            // Start the closing animation if we're at the end. Otherwise, finish and move on.
-            if _end {
-                _state = DIALOGUE_STATE.CLOSING;
-                _transitionCounter = 0;
-            } else {
-                _finished = true;
+if (_active &amp;&amp; !_paused) {
+    // Are we open and ready for text?
+    if (_state == DIALOGUE_STATE.OPEN) {
+    
+        // Are we at the end of our text?
+        if (_textCounter &gt;= string_length(_text)) {
+            _textCounter = string_length(_text); // Cap it off
+            if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back") ) {
+                // Start the closing animation if we're at the end. Otherwise, finish and move on.
+                if _end {
+                    _state = DIALOGUE_STATE.CLOSING;
+                    _transitionCounter = 0;
+                } else {
+                    _finished = true;
+                }
             }
-        }
-    } else {
-        // Otherwise, continue scrolling!
-
-        // Set scroll speed //
-        var currentChar = string_char_at(_text, floor(_textCounter));
-        var scrollSpeed = 0;
-        // Note: == works for string comparison in GMS.
-        switch currentChar {
-            case " ":
-                scrollSpeed = _spaceSpeed;
-                break;
-            case ",":
-                scrollSpeed = _commaSpeed;
-                break;
-            case ".":
-                scrollSpeed = _periodSpeed;
-                break;
-            default:
-                scrollSpeed = _charSpeed;
-        }
-
-        // SPEEDING CONTROLS //
-        // Prevents holding the "Z" key from carrying on from previous dialogue.
-        if keyboard_check_pressed( input_get("action")) {
-            _speeding = true;
-        }
-        if keyboard_check_released( input_get("action")) {
-            _speeding = false;
-        }
-
-        // EFFECT CONDITIONS //
-        switch _effect {
-            case DIALOGUE_TEXT_EFFECT.WAIT:
-                _effect_wait_timer--;
-                // Timeout
-                if (_effect_wait_timer &lt;= 0) {
-                    _effect = DIALOGUE_TEXT_EFFECT.NONE;
-                } else {
-                    scrollSpeed = 0;
-                }
-                break;
-            case DIALOGUE_TEXT_EFFECT.NEXT:
-                if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back")) {
-                    _effect = DIALOGUE_TEXT_EFFECT.NONE;   
-                    _speeding = false;      // Prevent speeding on start    
-                    _floatyNextCounter = 0; // Hide this        
-                } else {
-                    scrollSpeed = 0;
-                }
-                break;                
-        }
-
-        // If we're speeding up //
-        if _speeding {
-            scrollSpeed *= _speedUpFactor;    
-        }
-
-        // Actually move the counter //
-        _textCounter += scrollSpeed * _effect_speed_scale * game_get_dtime();
-
-        // PARSE COMMANDS //
-        if _effect == DIALOGUE_TEXT_EFFECT.NONE {
-            // Where in text is our next command?
-            var cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
-            //show_debug_message("index: " + string(cindex));
-            // While we still have commands to execute:
-            while(_textCounter + 1 &gt;= cindex) { // + 1 because of off-by-one errors
-                if (cindex == -1) {
-                    // We have no more commands
+        } else {
+            // Otherwise, continue scrolling!
+    
+            // Set scroll speed //
+            var currentChar = string_char_at(_text, floor(_textCounter));
+            var scrollSpeed = 0;
+            // Note: == works for string comparison in GMS.
+            switch currentChar {
+                case " ":
+                    scrollSpeed = _spaceSpeed;
                     break;
+                case ",":
+                    scrollSpeed = _commaSpeed;
+                    break;
+                case ".":
+                    scrollSpeed = _periodSpeed;
+                    break;
+                default:
+                    scrollSpeed = _charSpeed;
+            }
+    
+            // SPEEDING CONTROLS //
+            // Prevents holding the "Z" key from carrying on from previous dialogue.
+            if keyboard_check_pressed( input_get("action")) {
+                _speeding = true;
+            }
+            if keyboard_check_released( input_get("action")) {
+                _speeding = false;
+            }
+    
+            // EFFECT CONDITIONS //
+            switch _effect {
+                case DIALOGUE_TEXT_EFFECT.WAIT:
+                    _effect_wait_timer--;
+                    // Timeout
+                    if (_effect_wait_timer &lt;= 0) {
+                        _effect = DIALOGUE_TEXT_EFFECT.NONE;
+                    } else {
+                        scrollSpeed = 0;
+                    }
+                    break;
+                case DIALOGUE_TEXT_EFFECT.NEXT:
+                    if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back")) {
+                        _effect = DIALOGUE_TEXT_EFFECT.NONE;   
+                        _speeding = false;      // Prevent speeding on start    
+                        _floatyNextCounter = 0; // Hide this        
+                    } else {
+                        scrollSpeed = 0;
+                    }
+                    break;                
+            }
+    
+            // If we're speeding up //
+            if _speeding {
+                scrollSpeed *= _speedUpFactor;    
+            }
+    
+            // Actually move the counter //
+            _textCounter += scrollSpeed * _effect_speed_scale * game_get_dtime();
+    
+            // PARSE COMMANDS //
+            if _effect == DIALOGUE_TEXT_EFFECT.NONE {
+                // Where in text is our next command?
+                var cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
+                //show_debug_message("index: " + string(cindex));
+                // While we still have commands to execute:
+                while(_textCounter + 1 &gt;= cindex) { // + 1 because of off-by-one errors
+                    if (cindex == -1) {
+                        // We have no more commands
+                        break;
+                    }
+                    // Move our text counter to the command in question
+                    _textCounter = cindex - 1; // Off by 1
+                    //_scrollSpeed = 0;
+    
+                    parse_text_commands_execute_command(_commandData, _commandIndex);
+                    _commandIndex++;
+                    cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
                 }
-                // Move our text counter to the command in question
-                _textCounter = cindex - 1; // Off by 1
-                //_scrollSpeed = 0;
-
-                parse_text_commands_execute_command(_commandData, _commandIndex);
-                _commandIndex++;
-                cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
             }
         }
     }
@@ -332,6 +337,40 @@ if (_effect == DIALOGUE_TEXT_EFFECT.NEXT || _textCounter &gt;= string_length(_te
       </action>
       <action>
         <libid>1</libid>
+        <id>408</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>-1</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_if</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>-1</isnot>
+        <arguments>
+          <argument>
+            <kind>0</kind>
+            <string>_paused</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>422</id>
+        <kind>1</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>0</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+      </action>
+      <action>
+        <libid>1</libid>
         <id>604</id>
         <kind>0</kind>
         <userelative>0</userelative>
@@ -339,6 +378,20 @@ if (_effect == DIALOGUE_TEXT_EFFECT.NEXT || _textCounter &gt;= string_length(_te
         <useapplyto>0</useapplyto>
         <exetype>1</exetype>
         <functionname>action_inherited</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>424</id>
+        <kind>2</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>0</exetype>
+        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
@@ -470,7 +523,7 @@ if (_state == DIALOGUE_STATE.OPEN) {
             <kind>1</kind>
             <string>/// Draw floaty next counter
 
-if (_state == DIALOGUE_STATE.OPEN &amp;&amp; _floatyNextCounter &gt; 0) {
+if (!_paused &amp;&amp; _state == DIALOGUE_STATE.OPEN &amp;&amp; _floatyNextCounter &gt; 0) {
     var floatyNextCounterOpenTime = 10; // How long it takes to fade in
     var deltaHeight = curve_triangle(_floatyNextCounter, 70, 1);
 

@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>-1</persistent>
-  <parentName>objDialogue</parentName>
+  <parentName>objDialogueHandlerParent</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -64,14 +64,17 @@ _transitionCloseDuration = 15; // How long to close?
             <kind>1</kind>
             <string>/// Dialogue options
 
-// Text above the options
+// Text above the choices
 _text = "";
 
-// List of options
-_options[0] = "";
+// DS List of choices
+_choices = 0;
 
-// How many options we have
-_option_count = 0;
+// DS List of target dialogue names
+_targets = 0;
+
+// How many choices we have
+_choices_count = 0;
 </string>
           </argument>
         </arguments>
@@ -97,8 +100,11 @@ _option_count = 0;
 // index of the option we selected
 _selected = 0;
 
+// Pointer to our dialogue file
+_dialogueFile = 0;
+
 // The key we pass after making a selection.
-_key = "";
+//_key = "";
 </string>
           </argument>
         </arguments>
@@ -158,18 +164,16 @@ _max_text_width = -1;//_window_width - 2*_window_text_buffer;
           <argument>
             <kind>1</kind>
             <string>/// Scroll
-
-if keyboard_check_pressed( input_get("down") ) {
-    _selected++;
+if (_active &amp;&amp; _state == DIALOGUE_STATE.OPEN) {
+    if keyboard_check_pressed( input_get("down") ) {
+        _selected++;
+    }
+    if keyboard_check_pressed( input_get("up") ) {
+        _selected--;
+    }    
+    // Wrap selected
+    _selected = wrap(_selected, 0, _choices_count);
 }
-if keyboard_check_pressed( input_get("up") ) {
-    _selected--;
-}
-
-// Wrap selected
-_selected = wrap(_selected, 0, _option_count);
-
-
 </string>
           </argument>
         </arguments>
@@ -192,7 +196,7 @@ _selected = wrap(_selected, 0, _option_count);
             <kind>1</kind>
             <string>/// Select
 
-if _state == DIALOGUE_STATE.OPEN &amp;&amp; keyboard_check_pressed( input_get("action") ) {
+if _active &amp;&amp; _state == DIALOGUE_STATE.OPEN &amp;&amp; keyboard_check_pressed( input_get("action") ) {
     _state = DIALOGUE_STATE.CLOSING;
     _transitionCounter = 0;
 }
@@ -232,9 +236,13 @@ if _state == DIALOGUE_STATE.OPEN &amp;&amp; keyboard_check_pressed( input_get("a
             <kind>1</kind>
             <string>/// after finished, act upon our choices!
 
-if _finished {
-    parse_choice(_key, _selected);
-    //show_message("Selected option: " + _options[_selected]);
+if _finished &amp;&amp; _active {
+    _active = false;
+    //parse_choice(_key, _selected);
+    var target = _targets[| _selected];
+    if (target != "") {
+        dialogue_file_start_dialogue(_dialogueFile, target);
+    }
 }
 </string>
           </argument>
@@ -349,12 +357,12 @@ if (_state == DIALOGUE_STATE.OPEN) {
 
     // Draw Choices
     draw_set_halign(fa_middle);
-    for(var i = 0; i &lt; _option_count; i++) {
+    for(var i = 0; i &lt; _choices_count; i++) {
         var ypos = _window_ypos + _window_text_buffer + _top_text_height + i*(10 + font_get_size(font_menu));
         draw_text(
             _window_xpos + _window_width / 2,
             ypos,
-            _options[i]
+            _choices[| i]
         );
 
         // Draw selector

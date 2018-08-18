@@ -142,6 +142,7 @@ _dtime = 1;
 
 VARIABLE_SYSTEM = variable_system_create();
 INVENTORY_SYSTEM = inventory_create();
+DIALOGUE_SYSTEM = dialogue_system_create();
 
 // Key Input System
 
@@ -245,13 +246,7 @@ CHOICE_MISC_CONTAINER = noone;
             <string>/// Testing only
 
 if game_is_debug() {
-    d = dialogue_create();
-    var pretext = dialogue_text_create("You find a rusty machete on the ground.", "Pick it up?");
-    var choice = dialogue_choice_create("pick_machete", "", "Pick it up", "Throw it in a lake", "Don't");
-    dialogue_set_next(d, pretext, choice);
-//    var text = dialogue_text_create("Bugs have taken up &lt;speed 0.2&gt;residence&lt;speed 1&gt; in this&lt;wait 40&gt; rotten&lt;wait 40&gt; log.", 
-//                                    "&lt;skip&gt;Black Cat:&lt;/skip&gt;#So I decided &lt;speed 1&gt;to follow you up for laughs.&lt;next&gt;#Incidentally, where the heck'd you come from?");
-//    dialogue_set_next(d, text);
+    _dialogues = load_dialogue_file("dialogue");
 }
 
 </string>
@@ -304,6 +299,11 @@ if game_is_debug() {
     if (keyboard_check_pressed(vk_f3)) {
         _debug_overlay = !_debug_overlay;
     }
+    if game_is_debug_overlay() &amp;&amp; keyboard_check_pressed(ord("D")) {
+        // Open up the Dialogue editor!
+        instance_deactivate_all(true);
+        room_goto(roomDialogueEditor);
+    }
 
     // AVERAGE real_fps:
     _debug_fps_accumulator += fps_real;
@@ -322,6 +322,8 @@ if game_is_debug() {
                      + ")"
                      );
 }
+
+
 </string>
           </argument>
         </arguments>
@@ -346,7 +348,7 @@ if game_is_debug() {
 
 if game_is_debug() {
     if keyboard_check_pressed(vk_enter) {
-        dialogue_start(d);
+        dialogue_file_start_dialogue(_dialogues, "Dialogue");
     }
 }
 </string>
@@ -354,7 +356,7 @@ if game_is_debug() {
         </arguments>
       </action>
     </event>
-    <event eventtype="7" enumb="5">
+    <event eventtype="8" enumb="74">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -371,32 +373,9 @@ if game_is_debug() {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Reactivate dialogues
-dialogue_activate(objDialogue);
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="7" enumb="4">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Deactivate dialogues....
-dialogue_deactivate(objDialogue);
+            <string>/// Global GUI Settings
+//show_debug_message(string(display_get_gui_width()) + ", " + string(display_get_gui_height()));
+display_set_gui_size(view_wport * WINDOW_WIDTH / 1024, view_hport * WINDOW_HEIGHT / 768);
 </string>
           </argument>
         </arguments>
@@ -460,6 +439,8 @@ if game_is_debug() {
     if (game_is_debug_overlay()) {
         draw_set_color(c_green);
         draw_text(0, WINDOW_HEIGHT - 12, "Debug Overlay (F3): ON");
+
+        draw_text(0, WINDOW_HEIGHT - 24, "D: Dialogue Editor");
     } else {
         draw_set_color(c_ltgray);
         draw_text(0, WINDOW_HEIGHT - 12, "(F3): OFF");
