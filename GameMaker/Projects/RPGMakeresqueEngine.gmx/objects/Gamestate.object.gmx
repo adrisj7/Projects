@@ -375,7 +375,7 @@ if game_is_debug() {
             <kind>1</kind>
             <string>/// Global GUI Settings
 //show_debug_message(string(display_get_gui_width()) + ", " + string(display_get_gui_height()));
-display_set_gui_size(view_wport * WINDOW_WIDTH / 1024, view_hport * WINDOW_HEIGHT / 768);
+display_set_gui_size(view_wport * WINDOW_WIDTH / 640, view_hport * WINDOW_HEIGHT / 480);
 </string>
           </argument>
         </arguments>

@@ -11,9 +11,8 @@ switch(key) {
     case "dialogue key 1":
         
         break;
-    case "code0":
-        // Do the thing
-        show_message("OI");
+    case "code1":
+        
         break;
     //!END
 
