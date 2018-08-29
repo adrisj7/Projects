@@ -211,9 +211,9 @@ if editor_is_button_pressed(_deleteButton) {
 
 if editor_is_button_pressed(_plusButton) {
     var text = get_string("Choice element text?", "");
-    var target = get_string("Choice element target?", _parentDialogue._name);
+    //var target = //get_string("Choice element target?", _parentDialogue._name);
     if text != "" {
-        editor_choice_create_subelement(id, text, target);
+        editor_choice_create_subelement(id, text/*, target*/);
     }
 }
 </string>

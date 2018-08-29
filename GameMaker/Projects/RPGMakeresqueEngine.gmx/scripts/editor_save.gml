@@ -39,7 +39,7 @@ with(objDialogueEditorDialogue) {
                 for(var j = 0; j < ds_list_size(choiceList); j++) {
                     var choice = choiceList[| j];
                     ds_list_add(choices, choice._text);
-                    ds_list_add(targets, choice._target);
+                    ds_list_add(targets, editor_choice_get_target(choice));
                 }
                 ds_map_add_list(elementData, "choices", choices);
                 ds_map_add_list(elementData, "targets", targets);

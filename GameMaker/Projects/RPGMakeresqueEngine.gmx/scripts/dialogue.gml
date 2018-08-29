@@ -57,6 +57,8 @@ with (DIALOGUE_SYSTEM) {
     _dialogueCount = ds_list_size(dialogueSequence);
 }
 
+game_set_state(GAME_STATE.DIALOGUE);
+
 dialogue_system_next();
 
 #define dialogue_system_next
@@ -71,7 +73,8 @@ with (DIALOGUE_SYSTEM) {
 
     // If we're done
     if (_dialogueIndex >= _dialogueCount) {
-        // Let the game know we're out of dialogue!
+        // We're out of dialogue!
+        game_set_state(GAME_STATE.GAME);
         return 0;
     }
 
@@ -82,17 +85,15 @@ with (DIALOGUE_SYSTEM) {
         case "text":
             // Initialize our dialogue text handler
             with (_textHandler) {
-                _active = true;                                      // Make sure we're visible.
-                _paused = false;                                     // Not paused (only paused during a choice menu)
-                _finished = false;                                   // We start un-finished
-                _transitionCounter = 0;                              // Start our transition from zero
-                if (DIALOGUE_SYSTEM._dialogueIndex == 0) {           // Set our opening state, depending on whether we're at the start
+                dialogue_start_dialogue_text( currentWindow[? "text"] );
+                // Set our opening state, depending on whether we're at the start
+                if (DIALOGUE_SYSTEM._dialogueIndex == 0) {
                     _state = DIALOGUE_STATE.OPENING;
                 } else {
                     _state = DIALOGUE_STATE.OPEN;
                 }
-                _end = false;
-                if DIALOGUE_SYSTEM._dialogueIndex == DIALOGUE_SYSTEM._dialogueCount - 1 { // Should our text window close with an animation?
+                // Should our text window close with an animation?
+                if DIALOGUE_SYSTEM._dialogueIndex == DIALOGUE_SYSTEM._dialogueCount - 1 { 
                     _end = true;
                 } else {
                     var nextWindow = DIALOGUE_SYSTEM._dialogueSequence[| DIALOGUE_SYSTEM._dialogueIndex + 1];
@@ -101,13 +102,6 @@ with (DIALOGUE_SYSTEM) {
                         _end = true;
                     }
                 }
-                _rawText = currentWindow[? "text"];                  // Update raw text
-                _commandData = parse_text_commands(_rawText);        // Parse command data
-                _text = parse_text_commands_get_text(_commandData);  // Update real text
-                _textCounter = 0;                                    // Start our text from 0
-                _commandIndex = 0;                                   // Start from the 0th command
-                _speeding = false;                                   // We're never speeding from the start
-                _floatyNextCounter = 0;                              // Make sure our floaty transition starts properly
 
             }
             break;
@@ -196,3 +190,25 @@ d._max_text_width = windowTextWidth;
 d._top_text_height = textHeight;
 
 return d;
+#define dialogue_start_dialogue_text
+/// dialogue_start_dialogue_text(text);
+
+var text = argument0;
+
+game_set_state(GAME_STATE.DIALOGUE);
+
+with (DIALOGUE_SYSTEM._textHandler) {
+    _active = true;                                      // Make sure we're visible.
+    _paused = false;                                     // Not paused (only paused during a choice menu)
+    _finished = false;                                   // We start un-finished
+    _transitionCounter = 0;                              // Start our transition from zero
+    _state = DIALOGUE_STATE.OPENING;                     // Start opening
+    _end = true;
+    _rawText = text;                                     // Update raw text
+    _commandData = parse_text_commands(_rawText);        // Parse command data
+    _text = parse_text_commands_get_text(_commandData);  // Update real text
+    _textCounter = 0;                                    // Start our text from 0
+    _commandIndex = 0;                                   // Start from the 0th command
+    _speeding = false;                                   // We're never speeding from the start
+    _floatyNextCounter = 0;                              // Make sure our floaty transition starts properly
+}

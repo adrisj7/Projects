@@ -44,11 +44,11 @@ while !is_undefined(key) {
                 var choice = editor_create_choice_element(d);
                 choice._text = elementMap[? "text"];
                 var choices = elementMap[? "choices"];
-                var targets = elementMap[? "targets"];
+                //var targets = elementMap[? "targets"];
                 for(var j = 0; j < ds_list_size(choices); j++) {
                     var choiceText = choices[| j];
-                    var target = targets[| j];
-                    editor_choice_create_subelement(choice, choiceText, target);
+                    //var target = targets[| j];
+                    editor_choice_create_subelement(choice, choiceText);
                 }
                 break;
             case "code":

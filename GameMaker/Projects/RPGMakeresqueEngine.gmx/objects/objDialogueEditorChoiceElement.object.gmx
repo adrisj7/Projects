@@ -70,7 +70,7 @@ _fillColor = $6ac3ed;
 _parent = noone;
 
 _text = "";
-_target = "";
+//_target = "";
 </string>
           </argument>
         </arguments>
@@ -197,7 +197,7 @@ instance_destroy(_linkButton);
             <string>/// Are we connected with anyone?
 _connected = noone;
 with(objDialogueEditorDialogue) {
-    if _name == other._target {
+    if _name == editor_choice_get_target(other.id) {
         other._connected = id;
     }
 }
@@ -208,6 +208,38 @@ alarm[0] = 30;
       </action>
     </event>
     <event eventtype="3" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Link button
+_linkButton._active = (_connected == noone);
+
+if editor_is_button_pressed(_linkButton) {
+    event_perform(ev_alarm, 0);
+    if (_connected == noone) {
+        var dialogueThing = instance_create(x + 100, y - 10, objDialogueEditorDialogue);
+        dialogueThing._tab = objDialogueEditor._tabNames[| objDialogueEditor._tabSelected];
+        dialogueThing._name = editor_choice_get_target(id);
+        _connected = dialogueThing;
+    }
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -245,38 +277,6 @@ if editor_is_button_pressed(_deleteButton) {
         var index = ds_list_find_index(list, id);
         ds_list_delete(list, index);
         instance_destroy();
-    }
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Link button
-_linkButton._active = (_connected == noone);
-
-if editor_is_button_pressed(_linkButton) {
-    event_perform(ev_alarm, 0);
-    if (_connected == noone) {
-        var dialogueThing = instance_create(x + 100, y - 10, objDialogueEditorDialogue);
-        dialogueThing._tab = objDialogueEditor._tabNames[| objDialogueEditor._tabSelected];
-        dialogueThing._name = _target;
-        _connected = dialogueThing;
     }
 }
 </string>
@@ -361,8 +361,8 @@ draw_set_valign(fa_top);
 draw_sprite(sprDialogueEditorArrow,0,x+padding*2 + 32 + part1Width + 8, y + _height/2 + 4);
 
 draw_set_valign(fa_middle);
-var targ = _target;
-if targ == "" {
+var targ = editor_choice_get_target(id);
+if _connected == noone {//targ == "" {
     targ = "(none)";
     draw_set_color(c_gray);
 }

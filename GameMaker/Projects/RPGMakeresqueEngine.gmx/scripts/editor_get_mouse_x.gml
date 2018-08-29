@@ -8,7 +8,10 @@ var mx = device_mouse_x_to_gui(0);
 if !static {
     mx -= view_wview/2;    
 
-    var scale = objDialogueEditor._cameraZoom;
+    var scale = 1;
+    if instance_exists(objDialogueEditor) {
+        scale = objDialogueEditor._cameraZoom;
+    }
     mx *= scale;
 
     mx += view_xview;
@@ -30,7 +33,10 @@ var my = device_mouse_y_to_gui(0);
 if !static {
     my -= view_hview/2;    
 
-    var scale = objDialogueEditor._cameraZoom;
+    var scale = 1;
+    if instance_exists(objDialogueEditor) {
+        scale = objDialogueEditor._cameraZoom;
+    }
     my *= scale;
 
     my += view_yview;

@@ -103,8 +103,8 @@ _selected = 0;
 // Pointer to our dialogue file
 _dialogueFile = 0;
 
-// The key we pass after making a selection.
-//_key = "";
+// Purely visual
+_choiceCounter = 0;
 </string>
           </argument>
         </arguments>
@@ -167,9 +167,11 @@ _max_text_width = -1;//_window_width - 2*_window_text_buffer;
 if (_active &amp;&amp; _state == DIALOGUE_STATE.OPEN) {
     if keyboard_check_pressed( input_get("down") ) {
         _selected++;
+        _choiceCounter = 0; // Just visual
     }
     if keyboard_check_pressed( input_get("up") ) {
         _selected--;
+        _choiceCounter = 0; // Just visual
     }    
     // Wrap selected
     _selected = wrap(_selected, 0, _choices_count);
@@ -244,6 +246,28 @@ if _finished &amp;&amp; _active {
         dialogue_file_start_dialogue(_dialogueFile, target);
     }
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Visual stuff
+_choiceCounter++;
 </string>
           </argument>
         </arguments>
@@ -372,7 +396,7 @@ if (_state == DIALOGUE_STATE.OPEN) {
             var sy = ypos;// - font_get_size(font_menu)/2 - sbuffer;
             var sw = _window_width - 2*_window_text_buffer + 2*sbuffer;
             var sh = font_get_size(font_menu) + 2*sbuffer;
-            draw_window_selector(sx, sy, sw, sh, 1);
+            draw_window_selector(sx, sy, sw, sh, 1-curve_sine(_choiceCounter,60*3,0.3));
         }
     }
     draw_set_halign(fa_left);
