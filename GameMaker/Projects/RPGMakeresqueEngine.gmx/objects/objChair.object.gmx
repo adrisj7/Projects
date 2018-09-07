@@ -101,7 +101,7 @@ _moving = false;
             <kind>1</kind>
             <string>/// Player in range to push and grounded?
 
-if !_moving {
+if !_moving &amp;&amp; game_get_state() == GAME_STATE.GAME {
     var w = tileset_get_collision_width(),
         h = tileset_get_collision_height();
     var tx = floor(x / w),
