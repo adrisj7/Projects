@@ -115,7 +115,7 @@ visible = _active;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Transitions, if we need them.
+            <string>/// Transitions and setting finished
 
 
 if (_active) {
@@ -167,7 +167,7 @@ if (_active) {
             <kind>1</kind>
             <string>/// If finished, move on to the next window.
 
-if (_active) {
+if (_active &amp;&amp; game_get_state() == GAME_STATE.DIALOGUE) {
     if _finished {
         dialogue_system_next();
     }

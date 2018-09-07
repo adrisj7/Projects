@@ -28,7 +28,7 @@
             <string>/// Draw util
 
 _alphaChangeSpeed = 0.05;
-_blurChangeSpeed = 1 / 30;
+_blurChangeSpeed = 2 / 30;
 
 _alpha = 0;
 _blur = 0;
@@ -113,6 +113,13 @@ if abs(deltaAlpha) &lt; _alphaChangeSpeed {
     _alpha = _alphaTarget;
 } else {
     _alpha += sign(deltaAlpha) * _alphaChangeSpeed;
+}
+
+var deltaBlur = _blurTarget - _blur;
+if abs(deltaBlur) &lt; _blurChangeSpeed {
+    _blur = _blurTarget;
+} else {
+    _blur += sign(deltaBlur) * _blurChangeSpeed;
 }
 </string>
           </argument>

@@ -147,25 +147,26 @@ DIALOGUE_SYSTEM = dialogue_system_create();
 TILE_COLLISION_SYSTEM = tile_collision_system_create();
 OVERLAY_SYSTEM = overlay_create();
 CAMERA_SYSTEM = camera_system_create();
+MENU_SYSTEM = menu_system_create();
 
 // Key Input System
 
-INPUTS = input_system_create();
+INPUT_SYSTEM = input_system_create();
 
 // up down left right
-input_put_ext(INPUTS, "up", vk_up);
-input_put_ext(INPUTS, "down", vk_down);
-input_put_ext(INPUTS, "left", vk_left);
-input_put_ext(INPUTS, "right", vk_right);
+input_put_ext(INPUT_SYSTEM, "up", vk_up);
+input_put_ext(INPUT_SYSTEM, "down", vk_down);
+input_put_ext(INPUT_SYSTEM, "left", vk_left);
+input_put_ext(INPUT_SYSTEM, "right", vk_right);
 
 // action (Z)
-input_put_ext(INPUTS, "action", ord("Z"));
+input_put_ext(INPUT_SYSTEM, "action", ord("Z"));
 
 // back (x)
-input_put_ext(INPUTS, "back", ord("X"));
+input_put_ext(INPUT_SYSTEM, "back", ord("X"));
 
 // run (shift)
-input_put_ext(INPUTS, "run", vk_shift);
+input_put_ext(INPUT_SYSTEM, "run", vk_shift);
 
 </string>
           </argument>
@@ -212,7 +213,7 @@ SURFACE_WINDOW[1] = -1;
           <argument>
             <kind>1</kind>
             <string>/// CONTAINERS
-CHOICE_MISC_CONTAINER = noone;
+
 </string>
           </argument>
         </arguments>

@@ -41,4 +41,4 @@ is[? key] = val;
 
 var key = argument0;
 
-return input_get_ext(INPUTS, key);
+return input_get_ext(INPUT_SYSTEM, key);

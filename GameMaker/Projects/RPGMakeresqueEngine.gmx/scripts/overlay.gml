@@ -1,7 +1,9 @@
 #define overlay
-/***
+/*** overlay
+ *
  * A system for fading the screen and adding blur to it
-*/
+ *
+ */
 
 #define overlay_set_darkness
 /// overlay_set_darkness(alpha);

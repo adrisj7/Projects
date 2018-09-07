@@ -150,15 +150,14 @@
     <sprites name="GUI">
       <sprite>sprites\sprWindow</sprite>
       <sprite>sprites\sprTileColliision</sprite>
-      <sprites name="DEPTilesetEditor">
-        <sprite>sprites\sprTilesetEditorCollisionMark</sprite>
-      </sprites>
+      <sprite>sprites\sprCharacterProfile</sprite>
       <sprites name="Dialogue Editor">
         <sprite>sprites\sprDialogueEditorButtons</sprite>
         <sprite>sprites\sprSinglePixelMask</sprite>
         <sprite>sprites\sprDialogueEditorArrow</sprite>
         <sprite>sprites\sprDialogueEditorOrigin</sprite>
       </sprites>
+      <sprite>sprites\sprUselessHPBar</sprite>
     </sprites>
     <sprites name="Characters">
       <sprite>sprites\sprExampleCharsheet</sprite>
@@ -191,6 +190,7 @@
       <script>scripts\input.gml</script>
       <script>scripts\game_state.gml</script>
       <script>scripts\camera.gml</script>
+      <script>scripts\overlay.gml</script>
     </scripts>
     <scripts name="World">
       <script>scripts\door_set_locked.gml</script>
@@ -218,7 +218,6 @@
     </scripts>
     <scripts name="misc">
       <script>scripts\file_text_read_string_full.gml</script>
-      <script>scripts\overlay.gml</script>
     </scripts>
     <scripts name="Editors">
       <scripts name="Dialogue Editor">
@@ -294,6 +293,9 @@
         <object>objects\objDialogueTextHandler</object>
         <object>objects\objDialogueChoiceHandler</object>
       </objects>
+      <objects name="Menu">
+        <object>objects\objMenuMain</object>
+      </objects>
       <objects name="Tile Collision">
         <object>objects\objTileCollisionSystem</object>
         <object>objects\objTileCollision</object>
@@ -343,10 +345,10 @@
     <constant name="TILE_COLLISION_SYSTEM">global.tile_collision_system</constant>
     <constant name="OVERLAY_SYSTEM">global.overlay_system</constant>
     <constant name="CAMERA_SYSTEM">global.camera_system</constant>
-    <constant name="INPUTS">global.inputs</constant>
+    <constant name="INPUT_SYSTEM">global.inputs</constant>
+    <constant name="MENU_SYSTEM">global.menu_system</constant>
     <constant name="SURFACE_WINDOW_MIDDLE">global.window_middle_surface</constant>
     <constant name="SURFACE_WINDOW">global.surface_window</constant>
-    <constant name="CHOICE_MISC_CONTAINER">global.choice_container</constant>
     <constant name="TILE_WIDTH">32</constant>
     <constant name="TILE_HEIGHT">32</constant>
   </constants>
