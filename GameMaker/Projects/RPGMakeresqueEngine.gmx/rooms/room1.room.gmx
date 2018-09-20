@@ -75,7 +75,7 @@
     <instance objName="objTileCollision" x="48" y="224" name="inst_CAA84B6F" locked="0" code="" scaleX="3" scaleY="2" colour="4294967295" rotation="0"/>
     <instance objName="objTileCollision" x="48" y="256" name="inst_F5549062" locked="0" code="" scaleX="4" scaleY="3" colour="4294967295" rotation="0"/>
     <instance objName="objNoteUp" x="64" y="304" name="inst_D0CA5D2F" locked="0" code="note_text_init(&quot;This piano is very nice!&quot;);&#xA;" scaleX="2" scaleY="2" colour="4294967295" rotation="0"/>
-    <instance objName="objNoteUp" x="448" y="128" name="inst_EF98D851" locked="0" code="note_text_init(&quot;The bookshelf is lined with paperback copies. &lt;next&gt;#... Now wait a minute...&lt;next&gt;#&lt;speed 0.5&gt;They're all made out of cardboard...&lt;speed 1&gt;&quot;);&#xA;" scaleX="6" scaleY="2" colour="4294967295" rotation="0"/>
+    <instance objName="objNoteUp" x="448" y="128" name="inst_EF98D851" locked="0" code="note_text_init(&quot;The bookshelf is lined with paperback copies. &lt;next&gt;#... Now wait a minute...&lt;next&gt;#&lt;speed 0.5&gt;They're all made out of cardboard...&lt;speed 1&gt;&quot;);" scaleX="6" scaleY="2" colour="4294967295" rotation="0"/>
     <instance objName="objChair" x="384" y="160" name="inst_D1AC40B4" locked="0" code="" scaleX="1" scaleY="1" colour="4294967295" rotation="0"/>
   </instances>
   <tiles>

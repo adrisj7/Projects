@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>-1</persistent>
-  <parentName>objDialogueHandlerParent</parentName>
+  <parentName>objMenuParent</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -39,143 +39,37 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Override
-transition_set_duration(_transition, 11, 15);
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Chooser variables
+            <string>/// Inventory Util
 
-// Chooser. Set when initializing
-_chooser = noone;
-
-// Text above the choices
-//_text = "";
-
-// DS List of choices
-//_choices = 0;
-
-// DS List of target dialogue names
-_targets = 0;
-
-// How many choices we have
-//_choices_count = 0;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Util
-
-// index of the option we selected
 _selected = 0;
-
-// Pointer to our dialogue file
-_dialogueFile = 0;
-
-// Purely visual
-_choiceCounter = 0;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Visual
+_selectCounter = 0;
 </string>
           </argument>
         </arguments>
       </action>
     </event>
     <event eventtype="3" enumb="1">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Scroll
-/*
-if (_active &amp;&amp; transition_get_state(_transition) == TRANSITION_STATE.OPEN) {
-    if keyboard_check_pressed( input_get("down") ) {
-        _selected++;
-        _choiceCounter = 0; // Just visual
-    }
-    if keyboard_check_pressed( input_get("up") ) {
-        _selected--;
-        _choiceCounter = 0; // Just visual
-    }    
-    // Wrap selected
-    _selected = wrap(_selected, 0, _choices_count);
-}
-*/
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Select
-/*
-if _active &amp;&amp; transition_get_state(_transition) == TRANSITION_STATE.OPEN &amp;&amp; keyboard_check_pressed( input_get("action") ) {
-    transition_close(_transition);
-    //_state = DIALOGUE_STATE.CLOSING;
-    //_transitionCounter = 0;
-}
-*/
-</string>
-          </argument>
-        </arguments>
-      </action>
       <action>
         <libid>1</libid>
         <id>604</id>
@@ -206,36 +100,40 @@ if _active &amp;&amp; transition_get_state(_transition) == TRANSITION_STATE.OPEN
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// If chosen, act upon our choices!
+            <string>/// Moving in the inventory
 
-if chooser_get_selected(_chooser) != -1 {
-    _active = false;
-    //parse_choice(_key, _selected);
-    var target = _targets[| chooser_get_selected(_chooser)];
-    if (target != "") {
-        dialogue_file_start_dialogue_ext(_dialogueFile, target);
-    } else {
-        // If we got nothing, just move on.
-        dialogue_system_next();
+if transition_is_open(_transition) {
+    var prevSelected = _selected;
+    // Note: This assumes a 2 by x grid.
+    if keyboard_check_pressed( input_get("down") ) {
+        if (_selected &lt; inventory_get_size() - 1)
+            _selected += 2;
+    }
+    if keyboard_check_pressed( input_get("up") ) {
+        if (_selected &gt; 1)
+        _selected-= 2;
+    }
+    if keyboard_check_pressed( input_get("right") ) {
+        if _selected % 2 == 0 {
+            _selected++;
+        }
+    }
+    if keyboard_check_pressed( input_get("left") ) {
+        if _selected % 2 == 1 {
+            _selected--;
+        }
+    }
+    // Wrap selected
+    _selected = wrap(_selected, 0, inventory_get_size());
+    if prevSelected != _selected {
+        audio_play_sound(soundMenuBlip, AUDIO_PRIORITY_MENU, false);
     }
 
-    chooser_destroy(_chooser);
 }
-/*if _finished &amp;&amp; _active {
-    _active = false;
-    //parse_choice(_key, _selected);
-    var target = _targets[| _selected];
-    if (target != "") {
-        dialogue_file_start_dialogue(_dialogueFile, target);
-    }
-}
-*/
 </string>
           </argument>
         </arguments>
       </action>
-    </event>
-    <event eventtype="8" enumb="64">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -252,18 +150,128 @@ if chooser_get_selected(_chooser) != -1 {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// DEBUG
+            <string>/// Using items
 
-if game_is_debug_overlay() {
-    draw_set_font(font_debug);
-
-    draw_reset();
-
-    draw_text(10, 10+11*0, "Top Text:          " + _text);
-    draw_text(10, 10+11*2, "Key :              " + _key);
-    draw_text(10, 10+11*3, "Choice Index       " + string(_selected));
-    draw_text(10, 10+11*4, "Transition State:  " + string(_state));
+if transition_is_open(_transition) &amp;&amp; keyboard_check_pressed( input_get( "action") ) {
+    var item = inventory_get_item(_selected);
+    // If we return something, that means the item is used!
+    if (item_use(item) != -1) {
+        transition_close(_transition);
+        menu_close();
+    }
+    audio_play_sound(soundMenuSelectSoft, AUDIO_PRIORITY_MENU, false);
 }
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Visual stuff
+_selectCounter++;
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>other</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw window and stuff with transitions
+draw_reset();
+draw_set_font(font_menu);
+
+d3d_transform_stack_push();
+
+// If we're opening or closing, apply some magic effects.
+var sqrCurve = curve_up_poly(transition_get_progress_updown(_transition), 1, 2);
+
+var realAlpha = sqrCurve;
+
+var padding = 16;
+
+// Draw item description window
+draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
+var xa = 32,
+    ya = 32;
+var w = WINDOW_WIDTH - 2*xa,
+    h = (WINDOW_HEIGHT - 2*ya) / 4;
+
+// Item description window
+draw_window(xa, ya, w, h, draw_get_alpha());
+
+var itemSelected = inventory_get_item(_selected);
+
+if itemSelected != -1 {
+    // Item description
+    draw_text_ext(xa + padding, ya + padding, item_get_description(itemSelected), font_get_size(font_menu), w - 2*padding);
+}
+
+// Inventory selector
+ya += h + padding;
+h = 128;//WINDOW_HEIGHT - ya - padding - 32;
+
+// Inventory selector window
+draw_window(xa, ya, w, h, draw_get_alpha());
+
+if transition_is_open(_transition) {
+    // Draw item descriptions and hovering box thing
+    for(var i = 0; i &lt; inventory_get_size(); i++) {
+        // Get a grid thing going
+        var dx = i % 2,
+            dy = floor(i / 2);
+        var tw = (w - 2*padding) / 2,
+            th = 4 + font_get_size(font_menu) + padding;
+        dx *= tw;
+        dy *= th;
+        dx += padding;
+        dy += padding;
+        // Draw item name
+        draw_text(xa + dx, ya + dy, item_get_name(inventory_get_item(i)));
+        // Draw item count
+        var count = inventory_get_item_count(i);
+        if (count &gt; 1) {
+            draw_set_halign(fa_right);
+            draw_text(xa + dx + tw - padding, ya + dy, "(x " + string(count) + ")");
+            draw_set_halign(fa_left);
+        }
+    
+        // If our selector is here:
+        if i == _selected {
+            draw_window_selector_cycle(xa + dx, ya + dy, tw, th - 4, _selectCounter);
+        }
+    }
+}
+
+d3d_transform_stack_pop();
 </string>
           </argument>
         </arguments>

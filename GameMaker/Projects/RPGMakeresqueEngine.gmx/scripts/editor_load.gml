@@ -10,7 +10,7 @@ objDialogueEditor._isLoading = true;
 var fname;
 
 if argument_count == 0 {
-    fname = get_open_filename("Json file|*.json","");
+    fname = get_open_filename("Json file|*.json","C:\Users\adris\Documents\Projects\GameMaker\Projects\RPGMakeresqueEngine.gmx\datafiles\dialogue.json");
 } else {
     fname = argument[0];
 }

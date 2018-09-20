@@ -7,12 +7,9 @@ switch(key) {
     // Special start and end tokens: WARNING: Everything in between will be changed by dialogue editor.
 
     //!START
-    
-    case "dialogue key 1":
-        
-        break;
-    case "code1":
-        
+
+    case "Sweet Bread Use_Eat it_1":
+        inventory_remove_search_item(ITEM.SWEET_BREAD);
         break;
     //!END
 

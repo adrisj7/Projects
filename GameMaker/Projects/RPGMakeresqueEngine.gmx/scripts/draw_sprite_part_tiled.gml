@@ -18,7 +18,6 @@ var drawto = get_gui_scratchpad_surface(1);
 var countx = ceil(width / subw),
     county = ceil(height / subh);
 
-
 surface_set_target(drawto);
 draw_reset();
 draw_clear_alpha(c_black, 0);
@@ -31,5 +30,7 @@ for(var xx = 0; xx < countx; xx++) {
 
 surface_reset_target();
 draw_surface_part(drawto, 0, 0, width, height, xa, ya);
+
+draw_recover();
 
 //return drawto;

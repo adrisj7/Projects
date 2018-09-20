@@ -5,7 +5,7 @@
   <visible>-1</visible>
   <depth>0</depth>
   <persistent>-1</persistent>
-  <parentName>objDialogueHandlerParent</parentName>
+  <parentName>objMenuParent</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
@@ -39,7 +39,11 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///^ NOTE: We inherit an object used for dialogue! Exercise caution.
+            <string>/// Chooser
+
+_chooser = chooser_create("Inventory", "Load", "Quit");
+var h = 128 + 16;
+chooser_set_window_properties(_chooser, 32, 32, h, h * 3/4);
 </string>
           </argument>
         </arguments>
@@ -60,9 +64,9 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Inherited durations
-_transitionOpenDuration = 20;
-_transitionCloseDuration = 20;
+            <string>/// Util
+
+_choiceIndex = 0;
 </string>
           </argument>
         </arguments>
@@ -99,12 +103,16 @@ _transitionCloseDuration = 20;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Press back to close menu
-if  _active &amp;&amp; _state != DIALOGUE_STATE.CLOSING &amp;&amp; _transitionCounter &gt; 1 {
-    // By checking the transition counter, we don't close instantaniously.
-    if keyboard_check_pressed( input_get("back") ) {
-        menu_close_ext(id);
-    }
+            <string>/// Chooser transition
+
+// Closing
+if transition_is_open(_chooser._transition) &amp;&amp; (transition_is_closing(_transition) || transition_is_closed(_transition)) {
+    chooser_close(_chooser);
+}
+
+// Opening
+if transition_is_closed(_chooser._transition) &amp;&amp; (transition_is_opening(_transition)/* || transition_is_open(_transition)*/) {
+    chooser_open(_chooser);
 }
 </string>
           </argument>
@@ -126,16 +134,26 @@ if  _active &amp;&amp; _state != DIALOGUE_STATE.CLOSING &amp;&amp; _transitionCo
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// If Finished
-if (_active &amp;&amp; game_get_state() == GAME_STATE.MENU) {
-    if _finished {
-        _active = false;
-        game_set_state(GAME_STATE.GAME);
+            <string>/// Chooser selection
+
+if chooser_get_selected(_chooser) != -1 {
+    switch chooser_get_selected(_chooser) {
+        case 0:
+            // Inventory
+            menu_sub_open_next(MENU_SYSTEM._menuInventory);
+            break;
+        case 1:
+            // Load
+            show_message("Loading, I don't know yet :/");
+            break;
+        case 2:
+            // Quit
+            game_end();
+            break;
     }
+    // Reset the chooser so we're not in an infinite loop
+    chooser_close(_chooser);
 }
-
-show_debug_message("[objMenuMain Begin Step 3] " + string(_transitionCounter));
-
 </string>
           </argument>
         </arguments>
@@ -152,7 +170,7 @@ show_debug_message("[objMenuMain Begin Step 3] " + string(_transitionCounter));
         <exetype>2</exetype>
         <functionname></functionname>
         <codestring></codestring>
-        <whoName>self</whoName>
+        <whoName>other</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
         <arguments>
@@ -164,42 +182,38 @@ draw_reset();
 d3d_transform_stack_push();
 
 // If we're opening or closing, apply some magic effects.
-switch _state {
-    case DIALOGUE_STATE.OPENING:
-        var sqrCurve =  curve_up_poly(_transitionCounter, _transitionOpenDuration, 2);
-        // Alpha to the mix
-        draw_set_alpha(sqrCurve);
-        break;
+var sqrCurve = curve_up_poly(transition_get_progress_updown(_transition), 1, 2);
 
-    case DIALOGUE_STATE.CLOSING:
-        var cubeCurve = curve_down_poly(_transitionCounter, _transitionCloseDuration, 0.3);
-        // Alpha to the mix
-        draw_set_alpha(cubeCurve);
-        break;
-}
-
-var realAlpha = draw_get_alpha();
+var realAlpha = sqrCurve;
 
 // Darken the screen behind the gui
-draw_set_alpha(realAlpha * 0.4);
+/*
+draw_set_alpha(realAlpha * 0.6);
 draw_set_color(c_black);
 draw_rectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, false);
+*/
+
+var padding = 16;
 
 // Draw character window
 draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
-var xa = 32,
-    ya = 32;
-var w = WINDOW_WIDTH - 2*xa,
-    h = (WINDOW_HEIGHT - 2*ya) / 4;
-var padding = 16;
+var xa = _chooser._window_xpos + _chooser._window_width + padding,
+    ya = _chooser._window_ypos;
+var w = WINDOW_WIDTH - xa - 2*padding,//2*xa,
+    h = _chooser._window_height;//(WINDOW_HEIGHT - 2*ya) / 4;
+
+
+//draw_set_alpha(0.1);
+//show_debug_message("[objMainMenu draw GUI] alpha1: " + string(draw_get_alpha()));
 
 draw_window(xa, ya, w, h, draw_get_alpha());
+
 // Draw player profile (This assumes the sprite is a square).
 draw_sprite_stretched_ext(sprCharacterProfile, 0, xa + padding, ya + padding, h - 2*padding, h - 2*padding, c_white, draw_get_alpha());
 draw_set_font(font_menu);
-draw_text_color(xa + h - 2*padding + padding, ya + padding, objPlayer._name, c_white, c_white, c_white, c_white, draw_get_alpha());
+draw_text_colour(xa + h - 2*padding + padding, ya + padding, objPlayer._name, c_white, c_white, c_white, c_white, draw_get_alpha());
 // Useless HP Bar (for the RPGMaker Vibes)
-draw_text_color(xa + h - 2*padding + padding, ya + padding + font_get_size(font_menu) + 16, "HP:   10  / 10", c_white, c_white, c_white, c_white, draw_get_alpha());
+draw_text_colour(xa + h - 2*padding + padding, ya + padding + font_get_size(font_menu) + 16, "HP:   10  / 10", c_white, c_white, c_white, c_white, draw_get_alpha());
 draw_sprite_ext(sprUselessHPBar,0, xa + h - 2*padding + padding, ya + padding*2 + 2*font_get_size(font_menu) + 16+4, 1, 1, 0, c_white, draw_get_alpha());
 
 d3d_transform_stack_pop();

@@ -32,10 +32,10 @@ _maxKeyIndex = 0;
 
 // Path for where the code file is located.
 
-//_codeFilePath = "C:\Users\adris\Documents\Projects\GameMaker\Projects\RPGMakeresqueEngine.gmx\scripts\parse_choice.gml";
-//_notepadPath = "C:\Program Files\Notepad++\notepad++.exe";
-_codeFilePath = "F:\ADRIS I WANT TO DELETE THIS 50 GIGS WTF\Projects\GameMaker\Projects\RPGMakeresqueEngine.gmx\scripts\parse_choice.gml";
-_notepadPath = "F:\Notepad++\notepad++.exe";
+_codeFilePath = "C:\Users\adris\Documents\Projects\GameMaker\Projects\RPGMakeresqueEngine.gmx\scripts\parse_choice.gml";
+_notepadPath = "C:\Program Files (x86)\Notepad++\notepad++.exe";
+//_codeFilePath = "F:\ADRIS I WANT TO DELETE THIS 50 GIGS WTF\Projects\GameMaker\Projects\RPGMakeresqueEngine.gmx\scripts\parse_choice.gml";
+//_notepadPath = "F:\Notepad++\notepad++.exe";
 
 // Is our code file unsandboxed?
 _unsandboxed = false

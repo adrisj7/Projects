@@ -3,7 +3,7 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
   </Configs>
-  <datafiles number="13" name="datafiles">
+  <datafiles number="14" name="datafiles">
     <datafile>
       <name>dialogue.json</name>
       <exists>-1</exists>
@@ -21,116 +21,35 @@
       </ConfigOptions>
       <filename>dialogue.json</filename>
     </datafile>
-    <datafiles number="13" name="ExecuteShell">
-      <datafile>
-        <name>ExecuteShell.dylib.zip</name>
-        <exists>-1</exists>
-        <size>1130</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.dylib.zip</filename>
-      </datafile>
-      <datafile>
-        <name>ExecuteShell.dll</name>
-        <exists>-1</exists>
-        <size>97280</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.dll</filename>
-      </datafile>
-      <datafile>
-        <name>ExecuteShell.dll.zip</name>
-        <exists>-1</exists>
-        <size>7112</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.dll.zip</filename>
-      </datafile>
-      <datafile>
-        <name>ExecuteShell.dylib</name>
-        <exists>-1</exists>
-        <size>8464</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.dylib</filename>
-      </datafile>
-      <datafile>
-        <name>ExecuteShell.so</name>
-        <exists>-1</exists>
-        <size>5380</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.so</filename>
-      </datafile>
-      <datafile>
-        <name>ExecuteShell.so.zip</name>
-        <exists>-1</exists>
-        <size>1130</size>
-        <exportAction>2</exportAction>
-        <exportDir></exportDir>
-        <overwrite>0</overwrite>
-        <freeData>-1</freeData>
-        <removeEnd>0</removeEnd>
-        <store>0</store>
-        <ConfigOptions>
-          <Config name="Default">
-            <CopyToMask>9223372036854775807</CopyToMask>
-          </Config>
-        </ConfigOptions>
-        <filename>ExecuteShell.so.zip</filename>
-      </datafile>
-    </datafiles>
+    <datafile>
+      <name>ExecuteShell.dll</name>
+      <exists>-1</exists>
+      <size>97280</size>
+      <exportAction>2</exportAction>
+      <exportDir></exportDir>
+      <overwrite>0</overwrite>
+      <freeData>-1</freeData>
+      <removeEnd>0</removeEnd>
+      <store>0</store>
+      <ConfigOptions>
+        <Config name="Default">
+          <CopyToMask>9223372036854775807</CopyToMask>
+        </Config>
+      </ConfigOptions>
+      <filename>ExecuteShell.dll</filename>
+    </datafile>
   </datafiles>
   <NewExtensions>
     <extension index="0">extensions\Execute Shell</extension>
     <extension index="1">extensions\Free Shaders</extension>
   </NewExtensions>
-  <sounds name="sound"/>
+  <sounds name="sound">
+    <sounds name="menu">
+      <sound>sound\soundMenuSelectSoft</sound>
+      <sound>sound\soundMenuSelectStrong</sound>
+      <sound>sound\soundMenuBlip</sound>
+    </sounds>
+  </sounds>
   <sprites name="sprites">
     <sprite>sprites\sprScratchpad</sprite>
     <sprites name="World">
@@ -191,6 +110,7 @@
       <script>scripts\game_state.gml</script>
       <script>scripts\camera.gml</script>
       <script>scripts\overlay.gml</script>
+      <script>scripts\transition.gml</script>
     </scripts>
     <scripts name="World">
       <script>scripts\door_set_locked.gml</script>
@@ -205,6 +125,7 @@
     </scripts>
     <scripts name="Drawing">
       <script>scripts\draw_reset.gml</script>
+      <script>scripts\draw_recover.gml</script>
       <script>scripts\draw_sprite_part_tiled.gml</script>
       <script>scripts\get_gui_scratchpad_surface.gml</script>
       <script>scripts\draw_window.gml</script>
@@ -218,6 +139,9 @@
     </scripts>
     <scripts name="misc">
       <script>scripts\file_text_read_string_full.gml</script>
+      <script>scripts\stack.gml</script>
+      <script>scripts\string_search.gml</script>
+      <script>scripts\printf.gml</script>
     </scripts>
     <scripts name="Editors">
       <scripts name="Dialogue Editor">
@@ -287,6 +211,7 @@
       <object>objects\objScreenOverlayEffector</object>
       <object>objects\objDoorTraveler</object>
       <object>objects\objInventorySystem</object>
+      <object>objects\objChooser</object>
       <objects name="Dialogue">
         <object>objects\objDialogueHandler</object>
         <object>objects\objDialogueHandlerParent</object>
@@ -294,7 +219,10 @@
         <object>objects\objDialogueChoiceHandler</object>
       </objects>
       <objects name="Menu">
+        <object>objects\objMenu</object>
+        <object>objects\objMenuParent</object>
         <object>objects\objMenuMain</object>
+        <object>objects\objMenuInventory</object>
       </objects>
       <objects name="Tile Collision">
         <object>objects\objTileCollisionSystem</object>
@@ -334,11 +262,13 @@
     <room>rooms\roomDialogueEditor</room>
     <room>rooms\roomTilesetEditor</room>
   </rooms>
-  <constants number="16">
+  <constants number="23">
+    <constant name="_____________________MAIN">.</constant>
     <constant name="WINDOW_TITLE">"RPG Story Engine"</constant>
     <constant name="WINDOW_WIDTH">640</constant>
     <constant name="WINDOW_HEIGHT">480</constant>
     <constant name="GAME_SPEED">60</constant>
+    <constant name="_____________________SYSTEMS">.</constant>
     <constant name="VARIABLE_SYSTEM">global.variable_system</constant>
     <constant name="INVENTORY_SYSTEM">global.inventory_system</constant>
     <constant name="DIALOGUE_SYSTEM">global.dialogue_system</constant>
@@ -347,10 +277,15 @@
     <constant name="CAMERA_SYSTEM">global.camera_system</constant>
     <constant name="INPUT_SYSTEM">global.inputs</constant>
     <constant name="MENU_SYSTEM">global.menu_system</constant>
+    <constant name="_____________________DRAWING_MISC">.</constant>
+    <constant name="DRAW_PARAMETER_CONTAINER">global.draw_parameters</constant>
     <constant name="SURFACE_WINDOW_MIDDLE">global.window_middle_surface</constant>
     <constant name="SURFACE_WINDOW">global.surface_window</constant>
+    <constant name="_____________________TILES">.</constant>
     <constant name="TILE_WIDTH">32</constant>
     <constant name="TILE_HEIGHT">32</constant>
+    <constant name="_____________________AUDIO">.</constant>
+    <constant name="AUDIO_PRIORITY_MENU">100</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>
