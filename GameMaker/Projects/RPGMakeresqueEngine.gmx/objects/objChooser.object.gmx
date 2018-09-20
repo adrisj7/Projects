@@ -3,28 +3,14 @@
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
   <visible>-1</visible>
-  <depth>-3</depth>
-  <persistent>0</persistent>
-  <parentName>objDialogueEditorElementParent</parentName>
+  <depth>0</depth>
+  <persistent>-1</persistent>
+  <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
     <event eventtype="0" enumb="0">
       <action>
         <libid>1</libid>
-        <id>604</id>
-        <kind>0</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_inherited</functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-      </action>
-      <action>
-        <libid>1</libid>
         <id>603</id>
         <kind>7</kind>
         <userelative>0</userelative>
@@ -39,38 +25,20 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Window Properties
-_width = 300 - 32;
-_height = 32 + 4;
+            <string>/// Choice variables
 
-_fillColor = $6ac3ed;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Choice properties
+// DS List of all of our choice strings
+_choice = 0;
 
-// The parent objDialogueEditorChoice
-_parent = noone;
+// The index of our currently selected choice
+_selected = 0;
 
+// The final value that we have selected once we confirm our selection.
+// If -1, it indicates that we haven't selected yet.
+_selectedFinal = -1;
+
+// The text to display above the choice
 _text = "";
-//_target = "";
 </string>
           </argument>
         </arguments>
@@ -91,93 +59,72 @@ _text = "";
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Buttons
-var padding = 4;
-_editButton = editor_button_create(x + padding, y + padding, 1);
-_deleteButton = editor_button_create(x + _width - padding - 32, y + padding, 2);
-_linkButton = editor_button_create(x + _width + padding, y + padding, 9);
+            <string>/// Transition
+_transition = transition_create(11, 8);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Visual
+_choiceCounter = 0;
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Window variables
 
-_editButton.depth = depth - 1;
-_deleteButton.depth = depth - 1;
-_linkButton.depth = depth - 1;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Special dialogue connector thing
-_connected = noone;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>301</id>
-        <kind>0</kind>
-        <userelative>-1</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_set_alarm</functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>0</kind>
-            <string>1</string>
-          </argument>
-          <argument>
-            <kind>4</kind>
-            <string>0</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="1" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Clean up buttons
-instance_destroy(_editButton);
-instance_destroy(_deleteButton);
-instance_destroy(_linkButton);
+// Constants
+_window_min_width = 100;
+_window_min_height = 100;
+_window_text_buffer = 12;
+_window_center_ypos = WINDOW_HEIGHT/2 - 24;
+
+// SET THESE in the constructor (dialogue_choice_create... )
+_window_xpos = -1;
+_window_ypos = -1;
+_window_width = -1;
+_window_height = -1;
+
+_top_text_height = -1;
+_max_text_width = -1;//_window_width - 2*_window_text_buffer;
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="2" enumb="0">
+    <event eventtype="3" enumb="1">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -194,49 +141,8 @@ instance_destroy(_linkButton);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Are we connected with anyone?
-_connected = noone;
-with(objDialogueEditorDialogue) {
-    if _name == editor_choice_get_target(other.id) {
-        other._connected = id;
-        break;
-    }
-}
-alarm[0] = 30;
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Link button
-_linkButton._active = (_connected == noone);
-
-if editor_is_button_pressed(_linkButton) {
-    event_perform(ev_alarm, 0);
-    if (_connected == noone) {
-        var dialogueThing = instance_create(x + 100, y - 10, objDialogueEditorDialogue);
-        dialogueThing._tab = objDialogueEditor._tabNames[| objDialogueEditor._tabSelected];
-        dialogueThing._name = editor_choice_get_target(id);
-        _connected = dialogueThing;
-    }
-}
+            <string>/// Transition
+transition_update(_transition);
 </string>
           </argument>
         </arguments>
@@ -257,29 +163,98 @@ if editor_is_button_pressed(_linkButton) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Edit and Delete buttons
-
-// EDIT PROPERTIES
-if editor_is_button_pressed(_editButton) {
-    var text = get_string("Choice text:", _text);
-    if text == "" {
-        // Cancel
-    } else {
-        _text = text;
+            <string>/// Set visible
+visible = ! transition_is_closed(_transition);
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Choice Scroll
+if transition_is_open(_transition) {
+    var scrolled = false;
+    if keyboard_check_pressed( input_get("down") ) {
+        _selected++;
+        scrolled = true;
     }
-    var target = get_string("Choice target:", _target);
-    _target = target;
+    if keyboard_check_pressed( input_get("up") ) {
+        _selected--;
+        scrolled = true;
+    }
+    if scrolled {
+        _choiceCounter = 0; // Just visual
+        audio_play_sound(soundMenuBlip, AUDIO_PRIORITY_MENU, false);
+    }
+    // Wrap selected
+    _selected = wrap(_selected, 0, ds_list_size(_choice));
+
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Selected
+if transition_is_open(_transition) &amp;&amp; keyboard_check_pressed( input_get("action") ) {
+    transition_close(_transition);
+    _selectedFinal = _selected;
+    audio_play_sound(soundMenuSelectSoft, AUDIO_PRIORITY_MENU, false);
 }
 
-// DELETE
-if editor_is_button_pressed(_deleteButton) {
-    if show_question('Delete Choice Element "' + _text + '"?') {
-        var list = _parent._choices;
-        var index = ds_list_find_index(list, id);
-        ds_list_delete(list, index);
-        instance_destroy();
-    }
-}
+//if _selectedFinal == -1 &amp;&amp; transition_is_closed(_transition) {
+//}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Visual stuff
+_choiceCounter++;
 </string>
           </argument>
         </arguments>
@@ -288,17 +263,54 @@ if editor_is_button_pressed(_deleteButton) {
     <event eventtype="8" enumb="64">
       <action>
         <libid>1</libid>
-        <id>604</id>
-        <kind>0</kind>
+        <id>603</id>
+        <kind>7</kind>
         <userelative>0</userelative>
         <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_inherited</functionname>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
         <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw window with transition
+
+draw_reset();
+
+d3d_transform_stack_push();
+d3d_transform_set_identity();
+
+// If we're opening or closing, apply some magic effects.
+var progress = transition_get_progress_updown(_transition);
+
+var cubeCurve = curve_up_poly(progress, 1, 0.3),
+    sqrCurve  = curve_up_poly(progress, 1, 2);
+
+// Center the window for scaling
+d3d_transform_add_translation(0, -_window_height/2, 0);
+d3d_transform_add_scaling(1, cubeCurve, 1);
+// DeCenter the window
+d3d_transform_add_translation(0, _window_height/2, 0);
+// Alpha to the mix
+draw_set_alpha(sqrCurve);
+
+var realAlpha = draw_get_alpha();
+draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
+
+d3d_transform_add_translation(_window_xpos, _window_ypos, 0);
+
+draw_window(0, 0, _window_width, _window_height, draw_get_alpha());
+
+d3d_transform_stack_pop();
+
+draw_recover();
+</string>
+          </argument>
+        </arguments>
       </action>
       <action>
         <libid>1</libid>
@@ -316,62 +328,45 @@ if editor_is_button_pressed(_deleteButton) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Draw info and connected
+            <string>/// Draw text and choices
 
-editor_apply_view_transformation();
+if transition_is_open(_transition) {
+    draw_set_font(font_menu);
+    draw_reset();
+    draw_set_color(c_white);
 
-if _connected != noone &amp;&amp; instance_exists(_connected) {
-    var startX = x;
-    var startY = y + _height/2;
-    var targetX = _connected.x;
-    var targetY = _connected.y + _connected._height/2;
-    if targetX &lt; x {
-        targetX += _connected._width;
-    } else {
-        startX += _width;
+    // Draw Top Text
+    draw_text_ext(
+            _window_xpos + _window_text_buffer, 
+            _window_ypos + _window_text_buffer,
+            _text,
+            3 + font_get_size(font_menu),
+            _max_text_width
+    );
+
+    // Draw Choices
+    draw_set_halign(fa_middle);
+    for(var i = 0; i &lt; ds_list_size(_choice); i++) {
+        var ypos = _window_ypos + _window_text_buffer + _top_text_height + i*(10 + font_get_size(font_menu));
+        draw_text(
+            _window_xpos + _window_width / 2,
+            ypos,
+            _choice[| i]
+        );
+
+        // Draw selector
+        if (_selected == i) {
+            var sbuffer = 8;
+            var sx = _window_xpos + _window_text_buffer - sbuffer;
+            var sy = ypos;// - font_get_size(font_menu)/2 - sbuffer;
+            var sw = _window_width - 2*_window_text_buffer + 2*sbuffer;
+            var sh = font_get_size(font_menu) + 2*sbuffer;
+
+            draw_window_selector_cycle(sx, sy, sw, sh, _choiceCounter);
+        }
     }
-    /*if targetY &lt; y {
-        targetY += _connected._height;
-    } else {
-        startY += _height;
-    }*/
-    
-    draw_set_color(c_lime);
-    draw_line_width(startX, startY, targetX, targetY, 2);
+    draw_set_halign(fa_left);
 }
-
-
-
-var padding = 4;
-_editButton.x = x + padding;
-_editButton.y = y + padding;
-_deleteButton.x = x + _width - padding - 32;
-_deleteButton.y = y + padding;
-_linkButton.x = x + _width + padding;
-_linkButton.y = y + padding;
-
-// Draw info!
-
-var part1Width = _width/2 - 32*2 - padding*4;
-
-draw_set_color(c_black);
-draw_set_valign(fa_middle);
-draw_text_ext(x + padding*2 + 32, y + _height/2, '"' + _text + '"', font_get_size(font_debug) + 2,part1Width);
-draw_set_valign(fa_top);
-
-draw_sprite(sprDialogueEditorArrow,0,x+padding*2 + 32 + part1Width + 8, y + _height/2 + 4);
-
-draw_set_valign(fa_middle);
-var targ = editor_choice_get_target(id);
-if _connected == noone {//targ == "" {
-    targ = "(none)";
-    draw_set_color(c_gray);
-}
-draw_text_ext(x + padding*2 + part1Width + 32 + 16, y + _height/2, targ, font_get_size(font_debug) + 2, _width - (padding*2 + part1Width + 32+ 16) - padding);
-draw_set_valign(fa_top);
-
-
-d3d_transform_set_identity();
 </string>
           </argument>
         </arguments>

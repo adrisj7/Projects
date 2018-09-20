@@ -27,21 +27,7 @@
             <kind>1</kind>
             <string>/// Dialogue variables
 
-// Dialogue state. Used for transitions.
-// (Used for opening, closing and transition animations)
-enum DIALOGUE_STATE {
-    OPENING, // The dialogue is opening itself
-    OPEN,    // The dialogue is fully open (ex. text starts displaying, menu is ready)
-    CLOSING  // The dialogue is closing itself
-};
-
-// This window's state
-_state = DIALOGUE_STATE.OPENING;
-
-// Transition Variables
-_transitionOpenDuration = 0;  // How long to open?
-_transitionCloseDuration = 0; // How long to close?
-_transitionCounter = 0;          // What state of transition are we in?
+_transition = transition_create(0, 0);
 
 </string>
           </argument>
@@ -119,31 +105,10 @@ visible = _active;
 
 
 if (_active) {
-    switch _state {
-        case DIALOGUE_STATE.OPENING:
-            var progress;
-            if (_transitionOpenDuration == 0) {
-                progress = 1;    
-            } else {
-                progress = _transitionCounter / _transitionOpenDuration;
-            }
-            if (progress &gt;= 1) {
-                _state = DIALOGUE_STATE.OPEN;
-            }
-            break;
-        case DIALOGUE_STATE.CLOSING:
-            var progress;
-            if (_transitionCloseDuration == 0) {
-                progress = 1;    
-            } else {
-                progress = _transitionCounter / _transitionCloseDuration;
-            }
-            if (progress &gt;= 1) {
-                _finished = true;
-            }
-            break;
+    transition_update(_transition);
+    if transition_is_closed(_transition) {
+        _finished = true;
     }
-    _transitionCounter += game_get_dtime();
 }
 </string>
           </argument>

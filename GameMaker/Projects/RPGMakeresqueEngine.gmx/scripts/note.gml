@@ -18,8 +18,8 @@ event_inherited();
 _type = NOTE_TYPE.TEXT;
 _data[? "text"] = text;
 
-#define note_dialogue_init
-/// note_dialogue_init(dialogueFile, dialogueID);
+#define note_dialogue_init_ext
+/// note_dialogue_init_ext(dialogueFile, dialogueID);
 // MUST be called from an objNote create event
 
 var dialogueFile = argument0,
@@ -30,6 +30,12 @@ event_inherited();
 _type = NOTE_TYPE.DIALOGUE;
 _data[? "dialogueFile"] = dialogueFile;
 _data[? "dialogueID"]   = dialogueID;
+
+#define note_dialogue_init
+/// note_dialogue_init(dialogueID);
+// MUST be called from an objNote create event
+
+return note_dialogue_init_ext(DIALOGUE_SYSTEM._dialogues, argument0);
 
 #define note_locked_init
 /// note_locked_init();

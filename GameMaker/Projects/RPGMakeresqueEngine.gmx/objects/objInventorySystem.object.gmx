@@ -29,10 +29,24 @@
 
 // Full list of items here
 enum ITEM {
-    EXAMPLE_ITEM
+    EXAMPLE_ITEM,
+    SWEET_BREAD,
+    SWORD,
 }
+
+// Item names
 _itemNames = ds_map_create();
 _itemNames[? ITEM.EXAMPLE_ITEM] = "Example Item";
+_itemNames[? ITEM.SWORD] = "Broadsword";
+_itemNames[? ITEM.SWEET_BREAD] = "Sweet bread";
+
+
+// Item descriptions
+_itemDescriptions = ds_map_create();
+_itemDescriptions[? ITEM.EXAMPLE_ITEM] = "... How did you get this...";
+_itemDescriptions[? ITEM.SWORD] = "You need to hold on to this.";
+_itemDescriptions[? ITEM.SWEET_BREAD] = "It looks delicious.";
+
 </string>
           </argument>
         </arguments>

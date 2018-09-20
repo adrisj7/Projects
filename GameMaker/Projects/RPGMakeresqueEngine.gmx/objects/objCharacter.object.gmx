@@ -74,7 +74,7 @@ _snapYoffset = TILE_HEIGHT/2;
 
 // At what point should we snap back?
 // If left to zero, it will always snap in the direction you last traveled.
-_snapBufferX = 12;
+_snapBufferX = 12 * 0.8;
 _snapBufferY = _snapBufferX;
 </string>
           </argument>
@@ -141,7 +141,7 @@ _lastMoving = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Z
+            <string>/// Z Position
 z = 0;
 </string>
           </argument>
@@ -205,6 +205,38 @@ if moving &amp;&amp; !_lastMoving {
 }
 
 if moving {
+
+    // Set facing direction
+    var needToChangeDirection = false;
+    switch _facing {
+        case DIRECTION.LEFT:
+            if _moveInputX != -1
+                needToChangeDirection = true;
+            break;
+        case DIRECTION.RIGHT:
+            if _moveInputX != 1
+                needToChangeDirection = true;
+            break;
+        case DIRECTION.UP:
+            if _moveInputY != -1
+                needToChangeDirection = true;
+            break;
+        case DIRECTION.DOWN:
+            if _moveInputY != 1
+                needToChangeDirection = true;
+            break;
+    }
+    if needToChangeDirection {
+        if _moveInputX &gt; 0
+            _facing = DIRECTION.RIGHT;
+        else if _moveInputX &lt; 0
+            _facing = DIRECTION.LEFT;
+        else if _moveInputY &gt; 0
+            _facing = DIRECTION.DOWN;
+        else if _moveInputY &lt; 0
+            _facing = DIRECTION.UP;
+    }
+
 
     var moveSpd = _walkSpeed;
 
@@ -278,35 +310,6 @@ if moving {
     }
     if _moveInputX != 0 &amp;&amp; tileset_meeting(x, y + sign(_velY)) {
         _moveInputY = 0;
-    }
-    var needToChangeDirection = false;
-    switch _facing {
-        case DIRECTION.LEFT:
-            if _moveInputX != -1
-                needToChangeDirection = true;
-            break;
-        case DIRECTION.RIGHT:
-            if _moveInputX != 1
-                needToChangeDirection = true;
-            break;
-        case DIRECTION.UP:
-            if _moveInputY != -1
-                needToChangeDirection = true;
-            break;
-        case DIRECTION.DOWN:
-            if _moveInputY != 1
-                needToChangeDirection = true;
-            break;
-    }
-    if needToChangeDirection {
-        if _moveInputX &gt; 0
-            _facing = DIRECTION.RIGHT;
-        else if _moveInputX &lt; 0
-            _facing = DIRECTION.LEFT;
-        else if _moveInputY &gt; 0
-            _facing = DIRECTION.DOWN;
-        else if _moveInputY &lt; 0
-            _facing = DIRECTION.UP;
     }
 
     // Walk cycle

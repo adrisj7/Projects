@@ -142,12 +142,24 @@ _dtime = 1;
             <string>/// SYSTEM INITIALIZATION
 
 VARIABLE_SYSTEM = variable_system_create();
-INVENTORY_SYSTEM = inventory_create();
 DIALOGUE_SYSTEM = dialogue_system_create();
 TILE_COLLISION_SYSTEM = tile_collision_system_create();
 OVERLAY_SYSTEM = overlay_create();
 CAMERA_SYSTEM = camera_system_create();
 MENU_SYSTEM = menu_system_create();
+INVENTORY_SYSTEM = inventory_create();
+
+// Dialogue system
+
+DIALOGUE_SYSTEM._dialogues = load_dialogue_file("dialogue");
+
+// Transition system
+enum TRANSITION_STATE {
+    OPENING,
+    OPEN,
+    CLOSING,
+    CLOSED
+}
 
 // Key Input System
 
@@ -158,13 +170,10 @@ input_put_ext(INPUT_SYSTEM, "up", vk_up);
 input_put_ext(INPUT_SYSTEM, "down", vk_down);
 input_put_ext(INPUT_SYSTEM, "left", vk_left);
 input_put_ext(INPUT_SYSTEM, "right", vk_right);
-
 // action (Z)
 input_put_ext(INPUT_SYSTEM, "action", ord("Z"));
-
 // back (x)
 input_put_ext(INPUT_SYSTEM, "back", ord("X"));
-
 // run (shift)
 input_put_ext(INPUT_SYSTEM, "run", vk_shift);
 
@@ -213,7 +222,11 @@ SURFACE_WINDOW[1] = -1;
           <argument>
             <kind>1</kind>
             <string>/// CONTAINERS
-
+DRAW_PARAMETER_CONTAINER = ds_map_create();
+DRAW_PARAMETER_CONTAINER[? "alpha"] = stack_create();
+DRAW_PARAMETER_CONTAINER[? "color"] = stack_create();
+stack_push(DRAW_PARAMETER_CONTAINER[? "alpha"], 1);
+stack_push(DRAW_PARAMETER_CONTAINER[? "color"], c_white);
 </string>
           </argument>
         </arguments>
@@ -251,7 +264,10 @@ SURFACE_WINDOW[1] = -1;
             <string>/// Testing only
 
 if game_is_debug() {
-    _dialogues = load_dialogue_file("dialogue");
+    inventory_add_item(ITEM.SWORD);
+    inventory_add_item(ITEM.EXAMPLE_ITEM);
+    inventory_add_item(ITEM.EXAMPLE_ITEM);
+    inventory_add_item(ITEM.SWEET_BREAD);
 }
 
 </string>
@@ -362,7 +378,8 @@ if game_is_debug() {
 
 if game_is_debug() {
     if keyboard_check_pressed(vk_tab) {
-        dialogue_file_start_dialogue(_dialogues, "Dialogue");
+        dialogue_file_start_dialogue("Sweet Bread Use");
+        //dialogue_file_start_dialogue("Dialogue");
     }
 }
 </string>

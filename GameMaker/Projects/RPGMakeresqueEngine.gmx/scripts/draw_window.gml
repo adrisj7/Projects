@@ -11,7 +11,7 @@ var xa = argument0,
 draw_window_ext(sprWindow, 0, 0, 0, 32, 32, SURFACE_WINDOW_MIDDLE, 8, xa, ya, w, h, a);
 
 #define draw_window_ext
-/// draw_window_ext( sprite, subimg, left, top, spritewidth, spriteheight, midsurface, corner_size, x, y, windowwidth, windowheight, alpha);
+/// draw_window_ext( sprite, subimg, left, top, spritewidth, spriteheight, midsurface, corner_size, x, y, windowwidth, windowheight, middle alpha);
 // Full control script to draw a window from a sprite.
 
 var sprite  = argument0,
@@ -33,11 +33,14 @@ surface_set_target(get_gui_scratchpad_surface(0));
 d3d_transform_stack_push();
 d3d_transform_set_identity();
 
-draw_reset();
+//show_debug_message("[draw_window_ext] alpha0: " + string(draw_get_alpha()));
+
 draw_clear_alpha(c_black, 0);
 
-var a     = draw_get_alpha();
+//var a     = draw_get_alpha();
 var color = draw_get_color();
+
+draw_reset();
 
 // Scaling
 
@@ -51,14 +54,15 @@ if surface_exists(midsurf) {
     draw_surface_part(midsurf, 0, 0, winw, winh, 0, 0);
 }
 
+
 // Top Left Corner
-draw_sprite_part_ext(sprite, subimg, left, top, corner, corner, 0, 0, 1, 1, color, a);
+draw_sprite_part_ext(sprite, subimg, left, top, corner, corner, 0, 0, 1, 1, color, 1);
 // Top Right Corner
-draw_sprite_part_ext(sprite, subimg, left + sprw - corner, top, corner, corner, winw - corner, 0, 1, 1, color, a);
+draw_sprite_part_ext(sprite, subimg, left + sprw - corner, top, corner, corner, winw - corner, 0, 1, 1, color, 1);
 // Bottom Left Corner
-draw_sprite_part_ext(sprite, subimg, left, top  + sprh - corner, corner, corner, 0, winh - corner, 1, 1, color, a);
+draw_sprite_part_ext(sprite, subimg, left, top  + sprh - corner, corner, corner, 0, winh - corner, 1, 1, color, 1);
 // Bottom Right Corner
-draw_sprite_part_ext(sprite, subimg, left + sprw - corner, top + sprh - corner, corner, corner, winw - corner, winh - corner, 1, 1, color, a);
+draw_sprite_part_ext(sprite, subimg, left + sprw - corner, top + sprh - corner, corner, corner, winw - corner, winh - corner, 1, 1, color, 1);
 
 // Top Middle
 draw_sprite_part_tiled(sprite, subimg, left + corner, top, sprw - 2*corner, corner, winw - 2*corner, corner, corner, 0);
@@ -75,12 +79,25 @@ draw_sprite_part_tiled(sprite, subimg, left + corner, top + sprh - corner, sprw 
 
 
 surface_reset_target();
+
 d3d_transform_stack_pop();
 
-// Draw the actual window from the surface
+
 shader_set(shaderWindow);
+
+//surface_set_target(get_gui_scratchpad_surface(1));
 draw_surface_part_ext(get_gui_scratchpad_surface(0), 0, 0, winw, winh, xa, ya, 1, 1, c_white, alpha);
+//surface_reset_target();
+
 shader_reset();
+
+draw_recover();
+
+// Draw the actual window from the surface
+//draw_surface_part_ext(get_gui_scratchpad_surface(1), 0, 0, winw, winh, xa, ya, 1, 1, c_white, alpha);
+
+
+
 
 #define draw_window_floaty_next
 /// draw_window_floaty_next(x, y);
@@ -102,3 +119,19 @@ var xa = argument0,
     a  = argument4;
 
 draw_window_ext(sprWindow, 0, 32, 32, 16, 16, -1, 5, xa, ya, w, h, a);
+#define draw_window_selector_cycle
+///draw_window_selector_cycle(x, y, width, height, cycle index);
+// Draw window selector thing (menus, choosers, ect.)
+// BUT instead of defining the alpha explicitely, send it a counter and it'll take care of that.
+
+var xa = argument0,
+    ya = argument1,
+    w  = argument2,
+    h  = argument3,
+    c  = argument4;
+
+var minAlpha = 0.45,
+    maxAlpha = 1;
+var per = 60*2;
+
+draw_window_selector(xa, ya, w, h, 0.5*(minAlpha + maxAlpha) + curve_sine(c + per/4,per,maxAlpha - minAlpha));

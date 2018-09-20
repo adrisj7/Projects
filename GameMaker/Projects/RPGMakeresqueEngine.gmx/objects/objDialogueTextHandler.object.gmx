@@ -40,8 +40,8 @@
           <argument>
             <kind>1</kind>
             <string>/// Override
-_transitionOpenDuration = 5;  // How long to open?
-_transitionCloseDuration = 8; // How long to close?
+transition_set_duration(_transition, 5, 8);
+
 </string>
           </argument>
         </arguments>
@@ -184,6 +184,9 @@ _window_height = h;
 
 _window_text_buffer = 12;
 _max_text_width = _window_width - 2*_window_text_buffer;
+
+
+
 </string>
           </argument>
         </arguments>
@@ -207,101 +210,100 @@ _max_text_width = _window_width - 2*_window_text_buffer;
           <argument>
             <kind>1</kind>
             <string>/// IsFinished, Effects, and Scroll text
-if (_active &amp;&amp; !_paused) {
-    // Are we open and ready for text?
-    if (_state == DIALOGUE_STATE.OPEN) {
-    
-        // Are we at the end of our text?
-        if (_textCounter &gt;= string_length(_text)) {
-            _textCounter = string_length(_text); // Cap it off
-            if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back") ) {
-                // Start the closing animation if we're at the end. Otherwise, finish and move on.
-                if _end {
-                    _state = DIALOGUE_STATE.CLOSING;
-                    _transitionCounter = 0;
+
+// Are we open and ready for text?
+if (_active &amp;&amp; !_paused &amp;&amp; transition_is_open(_transition)) {
+    // Are we at the end of our text?
+    if (_textCounter &gt;= string_length(_text)) {
+        _textCounter = string_length(_text); // Cap it off
+        if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back") ) {
+            // Start the closing animation if we're at the end. Otherwise, finish and move on.
+            if _end {
+                transition_close(_transition);
+                //_state = DIALOGUE_STATE.CLOSING;
+                //_transitionCounter = 0;
+            } else {
+                _finished = true;
+            }
+        }
+    } else {
+        // Otherwise, continue scrolling!
+
+        // Set scroll speed //
+        var currentChar = string_char_at(_text, floor(_textCounter));
+        var scrollSpeed = 0;
+        // Note: == works for string comparison in GMS.
+        switch currentChar {
+            case " ":
+                scrollSpeed = _spaceSpeed;
+                break;
+            case ",":
+                scrollSpeed = _commaSpeed;
+                break;
+            case ".":
+                scrollSpeed = _periodSpeed;
+                break;
+            default:
+                scrollSpeed = _charSpeed;
+        }
+
+        // SPEEDING CONTROLS //
+        // Prevents holding the "Z" key from carrying on from previous dialogue.
+        if keyboard_check_pressed( input_get("action")) {
+            _speeding = true;
+        }
+        if keyboard_check_released( input_get("action")) {
+            _speeding = false;
+        }
+
+        // EFFECT CONDITIONS //
+        switch _effect {
+            case DIALOGUE_TEXT_EFFECT.WAIT:
+                _effect_wait_timer--;
+                // Timeout
+                if (_effect_wait_timer &lt;= 0) {
+                    _effect = DIALOGUE_TEXT_EFFECT.NONE;
                 } else {
-                    _finished = true;
+                    scrollSpeed = 0;
                 }
-            }
-        } else {
-            // Otherwise, continue scrolling!
-    
-            // Set scroll speed //
-            var currentChar = string_char_at(_text, floor(_textCounter));
-            var scrollSpeed = 0;
-            // Note: == works for string comparison in GMS.
-            switch currentChar {
-                case " ":
-                    scrollSpeed = _spaceSpeed;
-                    break;
-                case ",":
-                    scrollSpeed = _commaSpeed;
-                    break;
-                case ".":
-                    scrollSpeed = _periodSpeed;
-                    break;
-                default:
-                    scrollSpeed = _charSpeed;
-            }
-    
-            // SPEEDING CONTROLS //
-            // Prevents holding the "Z" key from carrying on from previous dialogue.
-            if keyboard_check_pressed( input_get("action")) {
-                _speeding = true;
-            }
-            if keyboard_check_released( input_get("action")) {
-                _speeding = false;
-            }
-    
-            // EFFECT CONDITIONS //
-            switch _effect {
-                case DIALOGUE_TEXT_EFFECT.WAIT:
-                    _effect_wait_timer--;
-                    // Timeout
-                    if (_effect_wait_timer &lt;= 0) {
-                        _effect = DIALOGUE_TEXT_EFFECT.NONE;
-                    } else {
-                        scrollSpeed = 0;
-                    }
-                    break;
-                case DIALOGUE_TEXT_EFFECT.NEXT:
-                    if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back")) {
-                        _effect = DIALOGUE_TEXT_EFFECT.NONE;   
-                        _speeding = false;      // Prevent speeding on start    
-                        _floatyNextCounter = 0; // Hide this        
-                    } else {
-                        scrollSpeed = 0;
-                    }
-                    break;                
-            }
-    
-            // If we're speeding up //
-            if _speeding {
-                scrollSpeed *= _speedUpFactor;    
-            }
-    
-            // Actually move the counter //
-            _textCounter += scrollSpeed * _effect_speed_scale * game_get_dtime();
-    
-            // PARSE COMMANDS //
-            if _effect == DIALOGUE_TEXT_EFFECT.NONE {
-                // Where in text is our next command?
-                var cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
-                //show_debug_message("index: " + string(cindex));
-                // While we still have commands to execute:
-                while(_textCounter + 1 &gt;= cindex) { // + 1 because of off-by-one errors
-                    if (cindex == -1) {
-                        // We have no more commands
-                        break;
-                    }
-                    // Move our text counter to the command in question
-                    _textCounter = cindex - 1; // Off by 1
-                    //_scrollSpeed = 0;
-    
-                    parse_text_commands_execute_command(_commandData, _commandIndex);
-                    _commandIndex++;
-                    cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
+                break;
+            case DIALOGUE_TEXT_EFFECT.NEXT:
+                if keyboard_check_pressed( input_get("action") ) || keyboard_check_pressed( input_get("back")) {
+                    _effect = DIALOGUE_TEXT_EFFECT.NONE;   
+                    _speeding = false;      // Prevent speeding on start    
+                    _floatyNextCounter = 0; // Hide this        
+                } else {
+                    scrollSpeed = 0;
                 }
+                break;                
+        }
+
+        // If we're speeding up //
+        if _speeding {
+            scrollSpeed *= _speedUpFactor;    
+        }
+
+        // Actually move the counter //
+        _textCounter += scrollSpeed * _effect_speed_scale * game_get_dtime();
+
+        // PARSE COMMANDS //
+        if _effect == DIALOGUE_TEXT_EFFECT.NONE {
+            // Where in text is our next command?
+            var cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
+            //show_debug_message("index: " + string(cindex));
+            // While we still have commands to execute:
+            while(_textCounter + 1 &gt;= cindex) { // + 1 because of off-by-one errors
+                if (cindex == -1) {
+                    // We have no more commands
+                    break;
+                }
+                // Move our text counter to the command in question
+                _textCounter = cindex - 1; // Off by 1
+                //_scrollSpeed = 0;
+
+                parse_text_commands_execute_command(_commandData, _commandIndex);
+                _commandIndex++;
+                cindex = parse_text_commands_get_command_charindex(_commandData, _commandIndex);
             }
         }
     }
@@ -337,40 +339,6 @@ if (_effect == DIALOGUE_TEXT_EFFECT.NEXT || _textCounter &gt;= string_length(_te
       </action>
       <action>
         <libid>1</libid>
-        <id>408</id>
-        <kind>0</kind>
-        <userelative>0</userelative>
-        <isquestion>-1</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_if</functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>-1</isnot>
-        <arguments>
-          <argument>
-            <kind>0</kind>
-            <string>_paused</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>422</id>
-        <kind>1</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>0</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-      </action>
-      <action>
-        <libid>1</libid>
         <id>604</id>
         <kind>0</kind>
         <userelative>0</userelative>
@@ -378,20 +346,6 @@ if (_effect == DIALOGUE_TEXT_EFFECT.NEXT || _textCounter &gt;= string_length(_te
         <useapplyto>0</useapplyto>
         <exetype>1</exetype>
         <functionname>action_inherited</functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>424</id>
-        <kind>2</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>0</exetype>
-        <functionname></functionname>
         <codestring></codestring>
         <whoName>self</whoName>
         <relative>0</relative>
@@ -422,38 +376,19 @@ draw_reset();
 d3d_transform_stack_push();
 
 // If we're opening or closing, apply some magic effects.
-switch _state {
-    case DIALOGUE_STATE.OPENING:
-        //var progress = _transitionCounter / _transitionOpenDuration;
+var progress = transition_get_progress_updown(_transition);
 
-        var cubeCurve = curve_up_poly(_transitionCounter, _transitionOpenDuration, 0.3);
-        var sqrCurve =  curve_up_poly(_transitionCounter, _transitionOpenDuration, 2);
+var cubeCurve = curve_up_poly(progress, 1, 0.3),
+    sqrCurve  = curve_up_poly(progress, 1, 2);
 
-        // Center the window for scaling
-        d3d_transform_add_translation(0, -_window_height/2, 0);
-        d3d_transform_add_scaling(1, cubeCurve, 1);
-        // DeCenter the window
-        d3d_transform_add_translation(0, _window_height/2, 0);
 
-        // Alpha to the mix
-        draw_set_alpha(sqrCurve);
-        break;
-
-    case DIALOGUE_STATE.CLOSING:
-        //var progress = _transitionCounter / _transitionCloseDuration;
-        
-        var cubeCurve = curve_down_poly(_transitionCounter, _transitionCloseDuration, 0.3);   //1 - power(progress, 0.3);
-
-        // Center the window for scaling
-        d3d_transform_add_translation(0, -_window_height/2, 0);
-        d3d_transform_add_scaling(1, cubeCurve, 1);
-        // DeCenter the window
-        d3d_transform_add_translation(0, _window_height/2, 0);
-
-        // Alpha to the mix
-        draw_set_alpha(cubeCurve);
-        break;
-}
+// Center the window for scaling
+d3d_transform_add_translation(0, -_window_height/2, 0);
+d3d_transform_add_scaling(1, cubeCurve, 1);
+// DeCenter the window
+d3d_transform_add_translation(0, _window_height/2, 0);
+// Alpha to the mix
+draw_set_alpha(cubeCurve);
 
 var realAlpha = draw_get_alpha();
 draw_set_alpha(realAlpha * 0.8); // Window transparancy is 0.8 now.
@@ -463,6 +398,7 @@ draw_window(0, 0, _window_width, _window_height, draw_get_alpha());
 
 d3d_transform_stack_pop();
 
+draw_recover();
 </string>
           </argument>
         </arguments>
@@ -486,7 +422,7 @@ d3d_transform_stack_pop();
             <string>/// Draw window text
 
 
-if (_state == DIALOGUE_STATE.OPEN) {
+if transition_is_open(_transition) {
     draw_set_font(font_menu);
     draw_reset();
     draw_set_color(c_white);
@@ -523,7 +459,7 @@ if (_state == DIALOGUE_STATE.OPEN) {
             <kind>1</kind>
             <string>/// Draw floaty next counter
 
-if (!_paused &amp;&amp; _state == DIALOGUE_STATE.OPEN &amp;&amp; _floatyNextCounter &gt; 0) {
+if (!_paused &amp;&amp; transition_is_open(_transition) &amp;&amp; _floatyNextCounter &gt; 0) {
     var floatyNextCounterOpenTime = 10; // How long it takes to fade in
     var deltaHeight = curve_triangle(_floatyNextCounter, 70, 1);
 
@@ -564,10 +500,10 @@ if game_is_debug_overlay() {
 
     draw_text(10, 10+11*0, "Text:                " + _text);
     draw_text(10, 10+11*5, "Text Progress:       " + string(floor(_textCounter)) + " / " +  string(string_length(_text)));
-    draw_text(10, 10+11*6, "Transition Progress: " + string(_transitionCounter));
-    draw_text(10, 10+11*7, "Transition State:    " + string(_state));
-    draw_text(10, 10+11*8, "Start?               " + string(_start));
-    draw_text(10, 10+11*9, "End?                 " + string(_end));
+    draw_text(10, 10+11*6, "Transition Progress: " + string(transition_get_progress(_transition)));
+    draw_text(10, 10+11*7, "Transition State:    " + string(transition_get_state(_transition)));
+    //draw_text(10, 10+11*8, "Start?               " + string(_start));
+    //draw_text(10, 10+11*9, "End?                 " + string(_end));
 }
 </string>
           </argument>

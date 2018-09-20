@@ -62,30 +62,6 @@ _width = 32*3 + 8+4*2;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Code properties
-
-_key = "code" + string(objDialogueEditorCodeEditor._maxKeyIndex);
-objDialogueEditorCodeEditor._maxKeyIndex++;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
             <string>/// Buttons (edit, delete, swap)
 
 _editButton = editor_button_create(x + 4, y + 4 + 12, 5);
