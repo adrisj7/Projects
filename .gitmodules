@@ -1,3 +1,6 @@
 [submodule "GameMaker/Projects/LD42"]
 	path = GameMaker/Projects/LD42
 	url = git@github.com:adrisj7/LD42.git
+[submodule "GameMaker/Projects/LD43"]
+	path = GameMaker/Projects/LD43
+	url = git@github.com:adrisj7/LD43.git
