@@ -1,11 +1,16 @@
 package util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.channels.FileChannel;
 
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -95,10 +100,90 @@ public class FileHandler {
 
     // Writes text to a file
     public static void writeTextFile(String fname, String text) {
+        // Make all relevant dirs first (god help us all if used in the wrong hands)
+        new File(fname).getParentFile().mkdirs();
         try (PrintWriter out = new PrintWriter(fname)) {
             out.print(text);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
+
+    // Launches an "Open File" prompt
+    public static File openFilePrompt() {
+        boolean foundGoodFile = false;
+        while (!foundGoodFile) {
+            final JFileChooser fc = new JFileChooser();
+            // Open the dialog using null as parent component if you are outside a
+            // Java Swing application otherwise provide the parent comment instead
+            int returnVal = fc.showOpenDialog(null);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                // Retrieve the selected file
+                File file = fc.getSelectedFile();
+                if (file.exists()) {
+                    foundGoodFile = true;
+                    return file;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Invalid file", "File not found! Please pick a real file",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            } else if (returnVal == JFileChooser.CANCEL_OPTION) {
+                return null;
+            }
+        }
+        // Should never reach (in theory)
+        return null;
+    }
+
+    // Copies a file.
+    // Returns the dest copied file
+    public static File copyFile(String srcName, String destName) {
+        File src = new File(srcName);
+        File dest = new File(destName);
+        // Create relevant dest dirs. Got help us all if this is accidentally misused
+        dest.getParentFile().mkdirs();
+        FileChannel sourceChannel = null;
+        FileChannel destChannel = null;
+        try {
+            if (!dest.exists()) {
+                System.out.println("Making new file: " + dest.getAbsolutePath());
+                dest.createNewFile();
+            }
+            FileInputStream finput = new FileInputStream(src); 
+            FileOutputStream foutput = new FileOutputStream(dest, false); 
+            sourceChannel = finput.getChannel();
+            destChannel = foutput.getChannel();
+            destChannel.transferFrom(sourceChannel, 0, sourceChannel.size());
+            sourceChannel.close();
+            destChannel.close();
+            finput.close();
+            foutput.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Did not find file at " + srcName + " or " + destName + "!");
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            // Uh oh
+            e.printStackTrace();
+        }
+        return dest;
+    }
+
+    public static String getExtension(String str) {
+        int i = str.lastIndexOf('.');
+        if (i > 0) {
+            return str.substring(i + 1);
+        }
+        return "";
+    }
+    public static String getNameWithoutExtension(String str) {
+        File f = new File(str);
+        str = f.getName();
+        int i = str.lastIndexOf('.');
+        if (i > 0) {
+            return str.substring(0, i);
+        }
+        return "";
+    }
+
 }

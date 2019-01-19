@@ -1,9 +1,9 @@
 package tiled;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -12,18 +12,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import util.FileHandler;
-
-/**
- * TODO (for tomorrow, ya lazy bumbum)
- * 
- * - Figure out how to deal with special/object tiles: Use Tiled Tile inheritance?
- * - ^ Dig around there and find a reasonable and non-intrusive way to handle that!
- * - DOCUMENT IT!!! Make a step by step "for dummies" guide. Write it out on paper first if it helps
- * 
- * - LD LD LD
- * - Check internships man, start cranking out a resume at least
- * 
- */
 
 /**
  * Holds tilemap data
@@ -38,21 +26,27 @@ public class BufferedTileMap {
 
     /** width/height in tiles **/
     private int width, height;
+    private int tileWidth, tileHeight;
+
+    // The name of the tilemap
+    private String name;
 
     /**
-     * 
      * @param tmxFname: Path to a Tiled .tmx (TileMap) file
      */
     public BufferedTileMap(String tmxFname) {
+        name = FileHandler.getNameWithoutExtension(tmxFname);
         Document doc = FileHandler.readXML(tmxFname);
         Element root = doc.getDocumentElement();
 
         // width and height of map
         width = Integer.parseInt(root.getAttribute("width"));
         height = Integer.parseInt(root.getAttribute("height"));
+        tileWidth = Integer.parseInt(root.getAttribute("tilewidth"));
+        tileHeight = Integer.parseInt(root.getAttribute("tileheight"));
 
         // Parse tileset data
-        tilesets = new LinkedList<>(); // Init first!
+        tilesets = new ArrayList<>(); // Init first!
         NodeList tilesetNodes = root.getElementsByTagName("tileset");
         for (int i = 0; i < tilesetNodes.getLength(); i++) {
             if (!(tilesetNodes.item(i) instanceof Element))
@@ -64,8 +58,14 @@ public class BufferedTileMap {
             // Get relative path of tileset
             String relativeImageFname = tilesetElement.getAttribute("source");
             Path tmxPath = Paths.get(tmxFname);
-            Path tilesetPath = Paths.get(tmxPath.getParent() + "\\" + relativeImageFname);
-            tilesetPath.normalize();
+            String tilesetFilePath = tmxPath.getParent() + "\\" + relativeImageFname;
+            Path tilesetPath = Paths.get(tilesetFilePath);
+            try {
+                tilesetPath = tilesetPath.toRealPath();
+            } catch (IOException e) {
+                System.out.println("Failed to interpret Tiled TileMap path!");
+                e.printStackTrace();
+            }
             BufferedTileset tileset = new BufferedTileset(tilesetPath.toString());
 
             // Get firstgid (the thing that we offset our tiles for to distinguish between
@@ -186,6 +186,22 @@ public class BufferedTileMap {
         return height;
     }
 
+    public int getTileWidth() {
+        return tileWidth;
+    }
+
+    public int getTileHeight() {
+        return tileHeight;
+    }
+
+    public int getTilesetCount() {
+        return tilesets.size();
+    }
+
+    public BufferedTileset getTileset(int index) {
+        return tilesets.get(index).tileset;
+    }
+
     /** Returns the number of tile layers in this tilemap **/
     public int getLayerCount() {
         return layers.size();
@@ -193,6 +209,15 @@ public class BufferedTileMap {
 
     public BufferedLayer getLayer(int layerID) {
         return layers.get(layerID);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    // Gets GameMaker equivalent name
+    public String getGMName() {
+        return "room_" + getName();
     }
 
     // Generic testing
@@ -214,5 +239,4 @@ public class BufferedTileMap {
             }
         }
     } // end main
-
 }

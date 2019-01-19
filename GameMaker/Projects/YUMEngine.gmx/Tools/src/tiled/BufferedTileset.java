@@ -1,6 +1,7 @@
 package tiled;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -15,6 +16,7 @@ import util.FileHandler;
  */
 public class BufferedTileset {
 
+    private String name; 
     private int width, height;
     private int tileWidth, tileHeight;
     private File sourceImage;
@@ -30,6 +32,10 @@ public class BufferedTileset {
         // Grab XML Data from the path.
         Document doc = FileHandler.readXML(tsxFname);
         Element root = doc.getDocumentElement();
+
+        // Name
+        name = root.getAttribute("name");
+
         // Tile width and height
         tileWidth = Integer.parseInt(root.getAttribute("tilewidth"));
         tileHeight = Integer.parseInt(root.getAttribute("tilewidth"));
@@ -45,9 +51,16 @@ public class BufferedTileset {
         Element imgElement = (Element) doc.getElementsByTagName("image").item(0);
         String relativeImageFname = imgElement.getAttribute("source");
         Path tsxPath = Paths.get(tsxFname);
-        Path imagePath = Paths.get(tsxPath.getParent() + "\\" + relativeImageFname);
-        imagePath.normalize();
+        String imagePathName = tsxPath.getParent() + "\\" + relativeImageFname;
+        Path imagePath = Paths.get(imagePathName);
+        try {
+            imagePath = imagePath.toRealPath();
+        } catch (IOException e) {
+            System.out.println("Failed to interpret Tiled Tileset path!");
+            e.printStackTrace();
+        }
         sourceImage = imagePath.toFile();
+        System.out.println("Image path: " + imagePath);
 
         // Tiles
         NodeList parseTiles = doc.getElementsByTagName("tile");
@@ -93,6 +106,11 @@ public class BufferedTileset {
 
     /// GETTERS AND SETTERS
 
+    /** @return the name attribute of this tileset (what you call it in Tiled). **/
+    public String getName() {
+        return name;
+    }
+
     /** @return How many tiles wide this tileset is */
     public int getWidth() {
         return width;
@@ -121,8 +139,14 @@ public class BufferedTileset {
         return tiles[id];
     }
 
+    // Gets the GameMaker equivalent name of this tileset
+    public String getGMName() {
+        return "tileset_" + getName();
+    }
+
     // Tileset loading tests
     public static void main(String[] args) {
         new BufferedTileset("C:/Users/adris/Documents/TEMP/TestTileset.tsx");
     }
+
 }

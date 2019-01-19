@@ -6,6 +6,7 @@ package gamemaker;
 public class BufferedGMTile {
 
     private String bgName;
+    private String utilName = ""; // ex. "inst_E3971015"
     private int x, y;
     private int width, height;
     private int xo, yo; // coordinates on the tile
@@ -24,11 +25,27 @@ public class BufferedGMTile {
 
     }
 
+    /// SETTERS
+    public void setUtilName(String utilName) {
+        this.utilName = utilName;
+    }
+
+    public void setScaleX(double scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public void setScaleY(double scaleY) {
+        this.scaleY = scaleY;
+    }
 
     /// GETTERS
 
     public String getBgName() {
         return bgName;
+    }
+
+    public String getUtilName() {
+        return utilName;
     }
 
     public int getX() {

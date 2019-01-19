@@ -9,6 +9,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import util.FileHandler;
 
@@ -16,7 +17,6 @@ import util.FileHandler;
  * Holds ALL data relevant to a room in GMS
  */
 public class BufferedRoom {
-
 
     /// General room settings
 
@@ -58,13 +58,97 @@ public class BufferedRoom {
     /// Tiles
     private List<BufferedGMTile> tiles;
 
+    // Creation code
+    String code = "";
+
+    // Open From File constructor
     public BufferedRoom(String roomGMXFname) {
         this();
         Document doc = FileHandler.readXML(roomGMXFname);
-        Element root = doc.getDocumentElement();
+        caption = readProperty(doc, "caption");
+        width = Integer.parseInt(readProperty(doc, "width"));
+        height = Integer.parseInt(readProperty(doc, "height"));
+        vsnap = Integer.parseInt(readProperty(doc, "vsnap"));
+        hsnap = Integer.parseInt(readProperty(doc, "hsnap"));
+        speed = Integer.parseInt(readProperty(doc, "speed"));
+        persistent = readProperty(doc, "persistent").equals("-1");
+        colour = Integer.parseInt(readProperty(doc, "colour"));
+        showColour = readProperty(doc, "showcolour").equals("-1");
+        code = readProperty(doc, "code");
+        enableViews = readProperty(doc, "enableViews").equals("-1");
+        clearViewBackground = readProperty(doc, "clearViewBackground").equals("-1");
+        clearDisplayBuffer = readProperty(doc, "clearDisplayBuffer").equals("-1");
 
+        // Oh boy
+        // Multi lined baby.
+        // This grabs the first ``<views> <view visible="-1" ... /> ... </views>`` view
+        Element view0 = (Element) ((Element) doc.getDocumentElement().getElementsByTagName("views").item(0))
+                .getElementsByTagName("view").item(0);
+        viewWview = Integer.parseInt(view0.getAttribute("wview"));
+        viewHview = Integer.parseInt(view0.getAttribute("hview"));
+        viewWport = Integer.parseInt(view0.getAttribute("wport"));
+        viewHport = Integer.parseInt(view0.getAttribute("hport"));
+
+        // Save instances
+        NodeList instances = ((Element) doc.getDocumentElement().getElementsByTagName("instances").item(0))
+                .getElementsByTagName("instance");
+        for (int i = 0; i < instances.getLength(); i++) {
+            if (!(instances.item(i) instanceof Element))
+                continue;
+            Element elem = (Element) instances.item(i);
+            String objName  = elem.getAttribute("objName");
+            String utilName = elem.getAttribute("name");
+            String code     = elem.getAttribute("code");
+            int x = Integer.parseInt(elem.getAttribute("x"));
+            int y = Integer.parseInt(elem.getAttribute("y"));
+            double scaleX =   Double.parseDouble(elem.getAttribute("scaleX"));
+            double scaleY =   Double.parseDouble(elem.getAttribute("scaleX"));
+            double rotation = Double.parseDouble(elem.getAttribute("rotation"));
+            BufferedInstance instance = new BufferedInstance(objName, x, y);
+            instance.setUtilName(utilName);
+            instance.setCode(code);
+            instance.setScaleX(scaleX);
+            instance.setScaleY(scaleY);
+            instance.setRotation(rotation);
+            addInstance(instance);
+        }
+
+        // Save Tiles
+        NodeList tiles = ((Element) doc.getDocumentElement().getElementsByTagName("tiles").item(0))
+                .getElementsByTagName("tile");
+        for (int i = 0; i < tiles.getLength(); i++) {
+            if (!(tiles.item(i) instanceof Element))
+                continue;
+            Element elem = (Element) tiles.item(i);
+            String bgName = elem.getAttribute("bgName");
+            String utilName = elem.getAttribute("name");
+            int x = Integer.parseInt(elem.getAttribute("x"));
+            int y = Integer.parseInt(elem.getAttribute("y"));
+            double scaleX = Double.parseDouble(elem.getAttribute("scaleX"));
+            double scaleY = Double.parseDouble(elem.getAttribute("scaleX"));
+            int w = Integer.parseInt(elem.getAttribute("w"));
+            int h = Integer.parseInt(elem.getAttribute("h"));
+            int xo = Integer.parseInt(elem.getAttribute("xo"));
+            int yo = Integer.parseInt(elem.getAttribute("yo"));
+            int id = Integer.parseInt(elem.getAttribute("id"));
+            int depth = Integer.parseInt(elem.getAttribute("depth"));
+            BufferedGMTile tile = new BufferedGMTile(bgName, x, y, w, h, xo, yo, id, depth);
+            tile.setUtilName(utilName);
+            tile.setScaleX(scaleX);
+            tile.setScaleY(scaleY);
+            addTile(tile);
+        }
     }
-    
+
+    // Make New constructor
+    public BufferedRoom(int tileWidth, int tileHeight, int widthInTiles, int heightInTiles) {
+        this();
+        width = tileWidth * widthInTiles;
+        height = tileHeight * heightInTiles;
+        vsnap = tileWidth;
+        hsnap = tileHeight;
+    }
+
     // Empty constructor
     public BufferedRoom() {
         instances = new LinkedList<>();
@@ -96,7 +180,7 @@ public class BufferedRoom {
         createSimpleVariable(doc, "persistent", persistent);
         createSimpleVariable(doc, "colour", colour);
         createSimpleVariable(doc, "showcolour", showColour);
-        createSimpleVariable(doc, "code", ""); // This is a bit of a hassle, but maybe later?
+        createSimpleVariable(doc, "code", code);
         createSimpleVariable(doc, "enableViews", enableViews);
         createSimpleVariable(doc, "clearViewBackground", clearViewBackground);
         createSimpleVariable(doc, "clearDisplayBuffer", clearDisplayBuffer);
@@ -166,13 +250,17 @@ public class BufferedRoom {
             ielem.setAttribute("objName", instance.getObjName());
             ielem.setAttribute("x", "" + instance.getX());
             ielem.setAttribute("y", "" + instance.getY());
-            ielem.setAttribute("name", "inst_" + ++nameCounter);
+            // Util name: If doesn't exist, generate. Otherwise, use last util name.
+            if (instance.getUtilName().equals(""))
+                ielem.setAttribute("name", "inst_" + ++nameCounter);
+            else
+                ielem.setAttribute("name", instance.getUtilName());
             ielem.setAttribute("locked", "0");
             ielem.setAttribute("code", instance.getCode());
             ielem.setAttribute("scaleX", "" + instance.getXScale());
             ielem.setAttribute("scaleY", "" + instance.getYScale());
             ielem.setAttribute("colour", "4294967295");
-            ielem.setAttribute("rotation", "0");
+            ielem.setAttribute("rotation", "" + instance.getRotation());
             ielems.appendChild(ielem);
         }
         root.appendChild(ielems);
@@ -190,7 +278,11 @@ public class BufferedRoom {
             telem.setAttribute("xo", "" + tile.getXo());
             telem.setAttribute("yo", "" + tile.getYo());
             telem.setAttribute("id", "" + ++idCounter);
-            telem.setAttribute("name", "inst_" + ++nameCounter);
+            // Util name: If doesn't exist, generate. Otherwise, use last util name.
+            if (tile.getUtilName().equals(""))
+                telem.setAttribute("name", "inst_" + ++nameCounter);
+            else
+                telem.setAttribute("name", tile.getUtilName());
             telem.setAttribute("depth", "" + tile.getDepth());
             telem.setAttribute("locked", "0");
             telem.setAttribute("colour", "4294967295");
@@ -219,7 +311,7 @@ public class BufferedRoom {
     /// Utilities
     private static void createSimpleVariable(Document doc, Element root, String name, Object value) {
         if (value instanceof Boolean) {
-            value = new String((boolean) value? "-1" : "0");
+            value = new String((boolean) value ? "-1" : "0");
         }
         Element newElem = doc.createElement(name);
         newElem.appendChild(doc.createTextNode(value.toString()));
@@ -230,6 +322,23 @@ public class BufferedRoom {
         Element root = doc.getDocumentElement();
         createSimpleVariable(doc, root, name, value);
     }
+
+    private static String readProperty(Document doc, String name) {
+        Element root = doc.getDocumentElement();
+        Element elem = (Element) root.getElementsByTagName(name).item(0);
+        return elem.getTextContent();
+    }
+    /// end of Utilities
+
+    /// Modifying/Creating a room functions
+    public void addTile(BufferedGMTile tile) {
+        tiles.add(tile);
+    }
+
+    public void addInstance(BufferedInstance instance) {
+        instances.add(instance);
+    }
+    /// end of Modifying/Creating a room functions
 
     /// GETTERS AND SETTERS
 
@@ -359,14 +468,6 @@ public class BufferedRoom {
 
     public void setViewHport(int viewHport) {
         this.viewHport = viewHport;
-    }
-
-    public List<BufferedInstance> getInstances() {
-        return instances;
-    }
-
-    public List<BufferedGMTile> getTiles() {
-        return tiles;
     }
 
     public static void main(String[] args) {
