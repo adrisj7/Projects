@@ -6,8 +6,14 @@
   <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites">
+    <sprites name="YUMEngine Core">
+      <sprites name="masks">
+        <sprite>sprites\YUMEngine_maskCollision</sprite>
+      </sprites>
+    </sprites>
     <sprite>sprites\sprDeleteMe</sprite>
     <sprite>sprites\sprEditorWarning</sprite>
+    <sprite>sprites\sprPlayerTest</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\tileset_0</background>
@@ -20,18 +26,29 @@
     </backgrounds>
   </backgrounds>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <scripts name="YUMEngine Core">
+      <script>scripts\YUMEngine_collision_system.gml</script>
+    </scripts>
+  </scripts>
   <objects name="objects">
+    <objects name="YUMEngine Core">
+      <object>objects\YUMEngine_objCollision</object>
+      <object>objects\YUMEngine_objCollisionSystem</object>
+    </objects>
     <object>objects\objDeleteMe</object>
     <object>objects\objWarningLabel</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room_BASE</room>
-    <room>rooms\room0</room>
-    <room>rooms\room3</room>
     <rooms name="YUMEngine Generated">
       <room>rooms\room_TestMap</room>
     </rooms>
   </rooms>
+  <constants number="2">
+    <constant name="TILE_WIDTH">32</constant>
+    <constant name="TILE_HEIGHT">32</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>

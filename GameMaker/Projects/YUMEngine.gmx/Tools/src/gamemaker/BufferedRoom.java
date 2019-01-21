@@ -1,8 +1,10 @@
 package gamemaker;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -64,6 +66,14 @@ public class BufferedRoom {
     // Open From File constructor
     public BufferedRoom(String roomGMXFname) {
         this();
+        // If file doesn't exist, move on.
+        if (!new File(roomGMXFname).exists()) {
+            JOptionPane.showMessageDialog(null,
+                    "Room BASE file not found at " + roomGMXFname + ". Ignoring and making room file from scratch",
+                    "Room BASE File Not Found", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Document doc = FileHandler.readXML(roomGMXFname);
         caption = readProperty(doc, "caption");
         width = Integer.parseInt(readProperty(doc, "width"));
@@ -96,13 +106,13 @@ public class BufferedRoom {
             if (!(instances.item(i) instanceof Element))
                 continue;
             Element elem = (Element) instances.item(i);
-            String objName  = elem.getAttribute("objName");
+            String objName = elem.getAttribute("objName");
             String utilName = elem.getAttribute("name");
-            String code     = elem.getAttribute("code");
+            String code = elem.getAttribute("code");
             int x = Integer.parseInt(elem.getAttribute("x"));
             int y = Integer.parseInt(elem.getAttribute("y"));
-            double scaleX =   Double.parseDouble(elem.getAttribute("scaleX"));
-            double scaleY =   Double.parseDouble(elem.getAttribute("scaleX"));
+            double scaleX = Double.parseDouble(elem.getAttribute("scaleX"));
+            double scaleY = Double.parseDouble(elem.getAttribute("scaleX"));
             double rotation = Double.parseDouble(elem.getAttribute("rotation"));
             BufferedInstance instance = new BufferedInstance(objName, x, y);
             instance.setUtilName(utilName);
