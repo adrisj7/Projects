@@ -2,9 +2,9 @@
 <object>
   <spriteName>&lt;undefined&gt;</spriteName>
   <solid>0</solid>
-  <visible>0</visible>
+  <visible>-1</visible>
   <depth>0</depth>
-  <persistent>-1</persistent>
+  <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,14 +25,22 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Grid for collisions
-_grid = ds_grid_create(0, 0); // set size in room_start
+            <string>/// Instance variables
+
+// Direction sprites
+_sprite_left = 0;
+_sprite_right = 0;
+_sprite_up = 0;
+_sprite_down = 0;
+_sprite_speed = 5 / 60;
+
+// Movement variables
+_move_speed = 2;
+
 </string>
           </argument>
         </arguments>
       </action>
-    </event>
-    <event eventtype="1" enumb="0">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -49,14 +57,23 @@ _grid = ds_grid_create(0, 0); // set size in room_start
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Destroy grid
-ds_grid_destroy(_grid);
+            <string>/// Util variables
+
+// What direction are we facing?
+_direction = DIRECTION.DOWN;
+
+// The current position that our player is at
+_tile_x_pos = 0;
+_tile_y_pos = 0;
+// The position our player is trying to get to
+_tile_x_target = 0;
+_tile_y_target = 0;
 </string>
           </argument>
         </arguments>
       </action>
     </event>
-    <event eventtype="7" enumb="4">
+    <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -73,19 +90,75 @@ ds_grid_destroy(_grid);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Fill collision grid
+            <string>/// Sprite handling
 
-// Clear and resize grid
-ds_grid_clear(_grid, 0);
-ds_grid_resize(_grid, ceil(room_width / TILE_WIDTH), ceil(room_height / TILE_HEIGHT));
-
-// Fill grid and destroy our collision objects
-with (YUMEngine_objCollision) {
-    var gx = x / TILE_WIDTH;
-    var gy = y / TILE_HEIGHT;
-    _grid[# gx, gy] = true;
-    instance_destroy();
+// Change sprite depending on our move direction
+switch (_direction) {
+    case DIRECTION.LEFT:
+        sprite_index = _sprite_left;
+        break;
+    case DIRECTION.RIGHT:
+        sprite_index = _sprite_right;
+        break;
+    case DIRECTION.UP:
+        sprite_index = _sprite_up;
+        break;
+    case DIRECTION.DOWN:
+        sprite_index = _sprite_down;
+        break;
 }
+
+if character_is_moving(id) {
+    // FIRST TIME: Start stepping!
+    if (image_speed != _sprite_speed) {
+        image_index = 1;
+    }
+    image_speed = _sprite_speed;
+} else {
+    image_speed = 0;
+    image_index = 0;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Movement
+
+var dx = _tile_x_target*TILE_WIDTH - x,
+    dy = _tile_y_target*TILE_HEIGHT - y;
+
+// Snap when we're close
+if abs(dx) &lt; _move_speed {
+    _tile_x_pos = _tile_x_target;
+    x = _tile_x_pos*TILE_WIDTH;
+} else {
+    // Otherwise, move
+    x += sign(dx) * _move_speed;
+} 
+if abs(dy) &lt; _move_speed {
+    _tile_y_pos = _tile_y_target;
+    y = _tile_y_pos*TILE_HEIGHT;
+} else {
+    // Otherwise, move
+    y += sign(dy) * _move_speed;
+}
+
 </string>
           </argument>
         </arguments>

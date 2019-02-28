@@ -1,4 +1,4 @@
-#define YUMEngine_collision_system
+#define __YUMEngine_collision_system
 /// Collision System!
 
 
@@ -12,11 +12,11 @@
 
 var xa = argument0,
     ya = argument1;
-var system = YUMEngine_collision_system_get();
+var system = __YUMEngine_collision_system_get();
 
 // What offset from our position to check for collisions
 var delta_x = xa - x,
-    delta_y = ya-  y;
+    delta_y = ya - y;
 
 // Tile bbox coordinates
 var left   = floor((bbox_left   + delta_x) / TILE_WIDTH),
@@ -40,7 +40,7 @@ return false;
 
 var tx = argument0,
     ty = argument1;
-var system = YUMEngine_collision_system_get();
+var system = __YUMEngine_collision_system_get();
 
 // If we're out of bounds, no collision
 if   tx < 0 || ty < 0 
@@ -50,9 +50,9 @@ if   tx < 0 || ty < 0
 
 return system._grid[# tx, ty];
 
-#define YUMEngine_collision_system_get
-/// YUMEngine_collision_system_get();
+#define __YUMEngine_collision_system_get
+/// __YUMEngine_collision_system_get();
 // Gets the collision system that we're using, making a new one if it doesn't exist.
-if !instance_exists(YUMEngine_objCollisionSystem)
-    instance_create(x, y, YUMEngine_objCollisionSystem);
-return YUMEngine_objCollisionSystem;
+if !instance_exists(__YUMEngine_objCollisionSystem)
+    instance_create(0, 0, __YUMEngine_objCollisionSystem);
+return __YUMEngine_objCollisionSystem;
