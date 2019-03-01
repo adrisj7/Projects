@@ -6,8 +6,21 @@
   <NewExtensions/>
   <sounds name="sound"/>
   <sprites name="sprites">
+    <sprites name="YUMEngine Core">
+      <sprites name="masks">
+        <sprite>sprites\YUMEngine_maskCollision</sprite>
+      </sprites>
+    </sprites>
     <sprite>sprites\sprDeleteMe</sprite>
     <sprite>sprites\sprEditorWarning</sprite>
+    <sprites name="YUMEngine Example">
+      <sprite>sprites\EXAMPLE_sprPlayerTest_Up</sprite>
+      <sprite>sprites\EXAMPLE_sprPlayerTest_Down</sprite>
+      <sprite>sprites\EXAMPLE_sprPlayerTest_Left</sprite>
+      <sprite>sprites\EXAMPLE_sprPlayerTest_Right</sprite>
+      <sprite>sprites\EXAMPLE_sprWindow</sprite>
+      <sprite>sprites\EXAMPLE_sprWindow2</sprite>
+    </sprites>
   </sprites>
   <backgrounds name="background">
     <background>background\tileset_0</background>
@@ -20,18 +33,44 @@
     </backgrounds>
   </backgrounds>
   <paths name="paths"/>
+  <scripts name="scripts">
+    <scripts name="YUMEngine Core">
+      <script>scripts\__YUMEngine_collision_system.gml</script>
+      <script>scripts\__YUMEngine_character_system.gml</script>
+      <script>scripts\__YUMEngine_window_system.gml</script>
+    </scripts>
+    <scripts name="YUMEngine Example">
+      <script>scripts\EXAMPLE_camera_follow.gml</script>
+    </scripts>
+  </scripts>
   <objects name="objects">
+    <objects name="YUMEngine Core">
+      <objects name="Collision System">
+        <object>objects\__YUMEngine_objCollision</object>
+        <object>objects\__YUMEngine_objCollisionSystem</object>
+      </objects>
+      <objects name="Character">
+        <object>objects\__YUMEngine_objCharacter_Base</object>
+        <object>objects\__YUMEngine_objCharacter_Player</object>
+      </objects>
+      <object>objects\__YUMEngine_Gamestate</object>
+    </objects>
+    <objects name="YUMEngine Example">
+      <object>objects\EXAMPLE_objPlayer</object>
+    </objects>
     <object>objects\objDeleteMe</object>
     <object>objects\objWarningLabel</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room_BASE</room>
-    <room>rooms\room0</room>
-    <room>rooms\room3</room>
     <rooms name="YUMEngine Generated">
       <room>rooms\room_TestMap</room>
     </rooms>
   </rooms>
+  <constants number="2">
+    <constant name="TILE_WIDTH">32</constant>
+    <constant name="TILE_HEIGHT">32</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>

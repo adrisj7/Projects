@@ -2,13 +2,9 @@ package tiled;
 
 import java.io.File;
 
-import javax.swing.JOptionPane;
-
 import gamemaker.BufferedGMBackground;
 import gamemaker.BufferedGMProject;
-import gamemaker.BufferedGMTile;
-import gamemaker.BufferedRoom;
-import tiled.BufferedTileMap.BufferedLayer;
+import gamemaker.GMTiledRoom;
 import util.FileHandler;
 
 /**
@@ -36,26 +32,19 @@ import util.FileHandler;
 
 public class TiledToGameMakerConverter {
 
-    public static void main(String[] args) {
-        /*
-         * UNCOMMENT ME WHEN DONE if (args.length != 0) {
-         * System.out.println("Invalid number of arguments: " + args.length +
-         * ". Expecting 1."); System.exit(1); } String mapfname = args[0];
-         */
-        String mapfname = "C:\\Users\\adris\\Documents\\TEMP\\TestMap.tmx";
-
-        // Buffer the Tiled Tilemap
-        BufferedTileMap map = new BufferedTileMap(mapfname);
-
-        // Get the game maker project directory
-        File projectFile = FileHandler.openFilePrompt();
+    private static BufferedGMProject getGMProject(File projectFile) {
+        if (projectFile == null)
+            projectFile = FileHandler.openFilePrompt();
+        // If it's still null, we cancel.
         if (projectFile == null) {
             // User canceled
             System.exit(0);
         }
-        String baseGMPath = projectFile.getParent();
-        BufferedGMProject bufferedProject = new BufferedGMProject(projectFile.getAbsolutePath());
+        return new BufferedGMProject(projectFile.getAbsolutePath());
+    }
 
+    private static void addTiledBackgroundsToGM(BufferedTileMap map, String baseGMPath,
+            BufferedGMProject bufferedProject) {
         // Add backgrounds. NOTE: If background already exists, this will do nothing.
         for (int i = 0; i < map.getTilesetCount(); i++) {
             BufferedTileset set = map.getTileset(i);
@@ -81,61 +70,58 @@ public class TiledToGameMakerConverter {
             background.setData("images\\" + destImageName);
             background.save(baseGMPath + "\\background\\" + newBackgroundName + ".background.gmx");
         }
+    }
+
+    public static void main(String[] args) {
+        String mapfname = "";
+        File projectFile = null;
+        switch (args.length) {
+        // 1 arg: Just the TILED Map.
+        // Prompt for GM Project
+        case 1:
+            mapfname = args[0];
+            break;
+        // 2 args: <TILED Map>, <GameMaker Project.gmx>
+        case 2:
+            mapfname = args[0];
+            projectFile = new File(args[1]);
+            if (!projectFile.exists()) {
+                System.err.println("GameMaker Project File at \"" + args[1] + "\" does not exist!");
+                System.exit(1);
+            }
+            break;
+        default:
+            System.out.println("Invalid number of arguments: " + args.length + ".");
+            System.out.println("USAGE: yumeditor_export_to_gms [tiled_map.tmx] <gamemaker_project.gmx>");
+            System.out.println("(where argument 2 is optional.)");
+            System.exit(1);
+        }
+
+        // Buffer the Tiled Tilemap
+        BufferedTileMap map = new BufferedTileMap(mapfname);
+
+        // Get the game maker project directory
+        BufferedGMProject bufferedProject = getGMProject(projectFile);
+
+        String baseGMPath = projectFile.getParent();
+
+        addTiledBackgroundsToGM(map, baseGMPath, bufferedProject);
 
         // Save a GameMaker room
         String mapName = map.getGMName();
         System.out.println("MAP NAME: " + mapName);
         String roomDir = baseGMPath + "\\rooms\\" + mapName + ".room.gmx";
 
-        // Check if base room exists
-        BufferedRoom room;
         String baseRoomDir = baseGMPath + "\\rooms\\room_BASE.room.gmx";
-        if (!new File(baseRoomDir).exists()) {
-            JOptionPane.showMessageDialog(null,
-                    "Room BASE file not found at " + baseRoomDir + ". Ignoring and making a new room file from scratch",
-                    "Room BASE File",
-                    JOptionPane.WARNING_MESSAGE);
-            room = new BufferedRoom();
-        } else {
-//            JOptionPane.showMessageDialog(null, "Room BASE found, and using it!", "Room BASE File",
-//                    JOptionPane.WARNING_MESSAGE);
-            room = new BufferedRoom(baseRoomDir);
-        }
-
-        // Conversions!
-        room.setWidth(map.getWidth() * map.getTileWidth());
-        room.setHeight(map.getHeight()* map.getTileHeight());
-
-        // Tiles: Layers!
-        int baseDepth = 10000000;
-        int idCounter = 10000001; // for the "id" attribute in each tile (idk either)
-        for (int i = 0; i < map.getLayerCount(); i++) {
-            BufferedLayer layer = map.getLayer(i);
-            // Adjust depth based on layer order (which matters!)
-            int depth = baseDepth - 10 * i;
-            for (int xx = 0; xx < layer.getWidth(); xx++) {
-                for (int yy = 0; yy < layer.getHeight(); yy++) {
-                    BufferedTile tile = layer.getTile(xx, yy);
-                    if (tile == null)
-                        continue;
-                    String bgName = tile.parent.getGMName();
-                    int width  = tile.parent.getTileWidth();
-                    int height = tile.parent.getTileHeight();
-                    int x = width  * xx;
-                    int y = height * yy;
-                    int tx = tile.id % tile.parent.getWidth(),
-                        ty = tile.id / tile.parent.getHeight();
-                    int xo = tx * width;
-                    int yo = ty * height;
-                    BufferedGMTile gmTile = new BufferedGMTile(bgName, x, y, width, height, xo, yo, idCounter, depth);
-                    room.addTile(gmTile);
-                    idCounter++;
-                }
-            }
-        }
+        GMTiledRoom room = new GMTiledRoom(baseRoomDir, map);
 
         room.saveToFile(roomDir);
         bufferedProject.addRoom(mapName);
+
+        // Macros
+        bufferedProject.setMacro("TILE_WIDTH", ""+map.getTileWidth());
+        bufferedProject.setMacro("TILE_HEIGHT", ""+map.getTileHeight());
+
         bufferedProject.save();
     }
 }
