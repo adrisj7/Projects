@@ -395,19 +395,19 @@ if instance_exists(objPlayer) {
 switch _state {
     case GOAT_STATE.WALKING:
     case GOAT_STATE.FOOD:
-        _vel_x += lengthdir_x(_move_force, _move_dir);
-        _vel_y += lengthdir_y(_move_force, _move_dir);
+        _vel_x += lengthdir_x(_move_force, _move_dir) * get_dtime();
+        _vel_y += lengthdir_y(_move_force, _move_dir) * get_dtime();
         // Bounce off the walls!
-        if place_meeting(x + _vel_x, y + _vel_y, objCollision) {
+        if place_meeting(x + _vel_x * get_dtime(), y + _vel_y * get_dtime(), objCollision) {
             goat_choose_random_move_dir();
         }
         break;
     case GOAT_STATE.FLEEING:
-        _vel_x += lengthdir_x(_run_force, _move_dir);
-        _vel_y += lengthdir_y(_run_force, _move_dir);
+        _vel_x += lengthdir_x(_run_force, _move_dir) * get_dtime();
+        _vel_y += lengthdir_y(_run_force, _move_dir) * get_dtime();
         // Bounce off the walls!
         // TODO: Choose direction away from player!
-        if place_meeting(x + _vel_x, y + _vel_y, objCollision) {
+        if place_meeting(x + _vel_x * get_dtime(), y + _vel_y * get_dtime(), objCollision) {
             goat_choose_random_move_dir();
         }
         break;
@@ -515,7 +515,7 @@ if mover_get_bounce_progress() &gt; _bounce_progress_counter {
             <kind>1</kind>
             <string>/// Extra physics!
 if _state == GOAT_STATE.WALKING {
-    if place_meeting(x + _vel_x, y + _vel_y, objCollisionGoat) {
+    if place_meeting(x + _vel_x * get_dtime(), y + _vel_y * get_dtime(), objCollisionGoat) {
         goat_choose_random_move_dir();
     }
     

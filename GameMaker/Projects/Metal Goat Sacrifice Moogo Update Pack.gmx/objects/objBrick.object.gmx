@@ -110,7 +110,7 @@ if _height != 0 {
     var guard = instance_place(x, y, objSentry);
     if guard != noone &amp;&amp; guard._state != SENTRY_STATE.GROUNDED {
         guard._state = SENTRY_STATE.GROUNDED;
-        _vel_h *= 0.2;
+        _vel_h *= 0.2 * get_dtime();
         //_vel_x *= 0.2;
         //_vel_y *= 0.2;
         audio_play_sound(sound_goat_fall, 4, false);
@@ -137,19 +137,23 @@ if _height != 0 {
           <argument>
             <kind>1</kind>
             <string>/// Physics
-if place_meeting(x + _vel_x, y, objCollision) {
+
+var mov_x = _vel_x * get_dtime(),
+    mov_y = _vel_y * get_dtime();
+
+if place_meeting(x + mov_x, y, objCollision) {
     _vel_x = 0;
 }
-x += _vel_x;
+x += mov_x;
 
-if place_meeting(x, y + _vel_y, objCollision) {
+if place_meeting(x, y + mov_y, objCollision) {
     _vel_y = 0;
 }
-y += _vel_y;
+y += mov_y;
 
 if (_height &gt; 0) {
-    _vel_h -= 0.2;
-    _height += _vel_h;
+    _vel_h -= 0.2 * get_dtime();
+    _height += _vel_h * get_dtime();
 } else {
     // Smack into the ground!
     if _height &lt; 0 {
@@ -163,7 +167,8 @@ if (_height &gt; 0) {
                 _move_target_y = other.y;
             }
         }
-        
+
+        // Poof
         var temp_emitter = part_emitter_create(Gamestate._main_part_system_ground);
         part_emitter_region(Gamestate._main_part_system_ground, temp_emitter, 
                 x - 2, x + 2, y - 2, y + 2, ps_shape_ellipse, ps_distr_gaussian);
@@ -176,7 +181,6 @@ if (_height &gt; 0) {
     _height = 0;
     _vel_x = 0;
     _vel_y = 0;
-    
 }
 
 </string>

@@ -16,10 +16,10 @@
     <sound>sound\sound_throw</sound>
     <sound>sound\sound_thump</sound>
     <sound>sound\sound_sacrifice</sound>
+    <sound>sound\sound_die</sound>
     <sound>sound\music_calm</sound>
     <sound>sound\music_uhoh</sound>
     <sound>sound\music_super</sound>
-    <sound>sound\sound_die</sound>
   </sounds>
   <sprites name="sprites">
     <sprites name="masks">
@@ -70,7 +70,9 @@
     <script>scripts\sound.gml</script>
     <scripts name="misc">
       <script>scripts\draw_text_wave_transformed.gml</script>
+      <script>scripts\get_dtime.gml</script>
     </scripts>
+    <script>scripts\settings.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\font_main</font>
@@ -87,6 +89,9 @@
       <object>objects\objPickup</object>
       <object>objects\objAlerter</object>
       <object>objects\objMover</object>
+      <object>objects\objSettings</object>
+      <object>objects\objPauseMenu</object>
+      <object>objects\objMenu</object>
     </objects>
     <object>objects\objPlayer</object>
     <object>objects\objGoat</object>
@@ -102,7 +107,6 @@
     <object>objects\objPlayerSuper</object>
     <object>objects\objSentryDead</object>
     <object>objects\objSign</object>
-    <object>objects\objMenu</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\room_MENU</room>
@@ -113,6 +117,10 @@
   <help>
     <rtf>help.rtf</rtf>
   </help>
+  <audiogroups name="audiogroups">
+    <audiogroup name="audiogroup_default"/>
+    <audiogroup name="audiogroup_music"/>
+  </audiogroups>
   <TutorialState>
     <IsTutorial>0</IsTutorial>
     <TutorialName></TutorialName>

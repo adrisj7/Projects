@@ -264,7 +264,8 @@ _state = SENTRY_STATE.COMING_BACK;
             <kind>1</kind>
             <string>/// Unground
 _state = SENTRY_STATE.SEARCHING;
-_look_direction_target = point_direction(x, y, objPlayer.x, objPlayer.y);
+if instance_exists(objPlayer)
+    _look_direction_target = point_direction(x, y, objPlayer.x, objPlayer.y);
 </string>
           </argument>
         </arguments>
@@ -502,8 +503,8 @@ if _state != SENTRY_STATE.POST &amp;&amp; _state != SENTRY_STATE.GROUNDED {
     var force = _move_force;
     if _state == SENTRY_STATE.ALERT
         force = _run_force;
-    _vel_x += lengthdir_x(force, dir);
-    _vel_y += lengthdir_y(force, dir);
+    _vel_x += lengthdir_x(force, dir) * get_dtime();
+    _vel_y += lengthdir_y(force, dir) * get_dtime();
 
     if !_sees_player &amp;&amp; sqr(x - _move_target_x) + sqr(y - _move_target_y) &lt; sqr(16) {
         switch _state {
@@ -546,7 +547,7 @@ if _state != SENTRY_STATE.POST &amp;&amp; _state != SENTRY_STATE.GROUNDED {
           <argument>
             <kind>1</kind>
             <string>/// Look direction and smoothing
-_look_direction += 0.2 * angle_difference(_look_direction_target, _look_direction);
+_look_direction += 0.2 * angle_difference(_look_direction_target, _look_direction) * get_dtime();
 </string>
           </argument>
         </arguments>

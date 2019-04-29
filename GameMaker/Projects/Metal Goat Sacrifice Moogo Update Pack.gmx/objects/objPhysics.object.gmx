@@ -58,26 +58,31 @@ _collide = true;
             <kind>1</kind>
             <string>/// Physics and collisions
 
+var mov_x = _vel_x * get_dtime(),
+    mov_y = _vel_y * get_dtime();
+
 if _collide {
-    if place_meeting(x + _vel_x, y, objCollision) {
-        //while !place_meeting(x + sign(_vel_x), y, objCollision) x += sign(_vel_x);
+    if place_meeting(x + mov_x, y, objCollision) {
+        //while !place_meeting(x + sign(mov_x), y, objCollision) x += sign(mov_x);
         _vel_x = 0;
+        mov_x = 0;
     }
-    x += _vel_x;
+    x += mov_x;
     
-    if place_meeting(x, y + _vel_y, objCollision) {
-        //while !place_meeting(x, y + sign(_vel_y), objCollision) y += sign(_vel_y);
+    if place_meeting(x, y + mov_y, objCollision) {
+        //while !place_meeting(x, y + sign(mov_y), objCollision) y += sign(mov_y);
         _vel_y = 0;
+        mov_y = 0;
     }
-    y += _vel_y;
+    y += mov_y;
 } else {
-    x += _vel_x;
-    y += _vel_y;
+    x += mov_x;
+    y += mov_y;
 }
 
 // Apply friction
-_vel_x *= (1 - _fric);
-_vel_y *= (1 - _fric);
+_vel_x *= (1 - _fric * get_dtime());
+_vel_y *= (1 - _fric * get_dtime());
 
 
 // Clamp to room

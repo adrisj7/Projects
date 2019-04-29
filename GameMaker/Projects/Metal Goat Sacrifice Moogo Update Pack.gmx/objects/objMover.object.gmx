@@ -93,7 +93,7 @@ _bounce_angle = 0;
             <string>/// Bounce
 
 // Move by bounce speed
-_bounce_index += _bounce_speed;
+_bounce_index += _bounce_speed * get_dtime();
 
 // Convert bounce index to progress (every 1 is a full period)
 var progress = mover_get_bounce_progress();

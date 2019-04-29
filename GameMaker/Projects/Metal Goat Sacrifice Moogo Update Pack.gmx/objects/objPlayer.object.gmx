@@ -142,11 +142,14 @@ _bounce_progress_counter = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Pickup object
+            <string>/// Object Action Properties
 
 _item_pickup = noone;
 
 _goat_stack = 0;
+
+// What angle we're aiming at?
+_aim_angle = 0;
 </string>
           </argument>
         </arguments>
@@ -185,11 +188,11 @@ _goat_stack = 0;
             <kind>1</kind>
             <string>/// Move Inputs
 
-if _state != PLAYER_STATE.CUTSCENE {
-    _move_x_axis = keyboard_check(ord("D")) - keyboard_check(ord("A"));
-    _move_y_axis = keyboard_check(ord("S")) - keyboard_check(ord("W"));
-    
-    if _move_x_axis == 0 &amp;&amp; _move_y_axis == 0 {
+if _state != PLAYER_STATE.CUTSCENE &amp;&amp; get_dtime() != 0{
+    if settings_get_control_mode_wasd() {
+        _move_x_axis = keyboard_check(ord("D")) - keyboard_check(ord("A"));
+        _move_y_axis = keyboard_check(ord("S")) - keyboard_check(ord("W"));
+    } else {
         _move_x_axis = keyboard_check(vk_right) - keyboard_check(vk_left);
         _move_y_axis = keyboard_check(vk_down) - keyboard_check(vk_up);
     }
@@ -198,6 +201,8 @@ if _state != PLAYER_STATE.CUTSCENE {
     _move_y_axis = 0;
 }
 
+// Aiming is NO LONGER handled by movement, but by a separate axis
+/*
 if _move_x_axis != 0 || _move_y_axis != 0 {
     var move_angle = point_direction(0, 0, _move_x_axis, _move_y_axis);
     var adiff = angle_difference(move_angle, _last_move_dir);
@@ -206,6 +211,50 @@ if _move_x_axis != 0 || _move_y_axis != 0 {
         _last_move_dir = move_angle;
     } else {
         _last_move_dir += sign(adiff) * spd;
+    }
+}
+*/
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Aim inputs
+
+var axis_x = 0,
+    axis_y = 0;
+if settings_get_control_mode_wasd() {
+    axis_x = keyboard_check(vk_right) - keyboard_check(vk_left);
+    axis_y = keyboard_check(vk_down) - keyboard_check(vk_up);
+} else {
+    axis_x = keyboard_check(ord("D")) - keyboard_check(ord("A"));
+    axis_y = keyboard_check(ord("S")) - keyboard_check(ord("W"));
+}
+
+if (axis_x != 0 || axis_y != 0) {
+    // The angle that we're aiming at rigidly
+    var target_angle = point_direction(0, 0, axis_x, axis_y);
+    var adiff = angle_difference(target_angle, _aim_angle);
+    var spd = clamp(10 * adiff / 45, 8, 30) * get_dtime();
+    if abs(adiff) &lt; spd {    
+        _aim_angle = target_angle;
+    } else {
+        _aim_angle += sign(adiff) * spd;
     }
 }
 </string>
@@ -237,8 +286,8 @@ if (_move_x_axis == 0 &amp;&amp; _move_y_axis == 0) {
     move_force_real = 0;
 }
 
-_vel_x += lengthdir_x(move_force_real, move_angle);//_move_x_axis * _move_force;
-_vel_y += lengthdir_y(move_force_real, move_angle);//_move_y_axis * _move_force;
+_vel_x += lengthdir_x(move_force_real, move_angle) * get_dtime();
+_vel_y += lengthdir_y(move_force_real, move_angle) * get_dtime();
 </string>
           </argument>
         </arguments>
@@ -352,14 +401,16 @@ if _state == PLAYER_STATE.NORMAL &amp;&amp; keyboard_check_pressed(vk_space) {
     // If we got a brick, throw it!
     if player_get_item_index() == objBrick {
             // Throw brick
+            show_debug_message("[DEBUG Brick] !!!");
             var throw_side_vel = 3;
             _item_pickup.y = floor(y / 16) * 16 + 8;
             _item_pickup._height = 3;
             _item_pickup._vel_h = 2;
-            _item_pickup._vel_x = lengthdir_x(throw_side_vel, _last_move_dir);
-            _item_pickup._vel_y = lengthdir_y(throw_side_vel, _last_move_dir);
+            _item_pickup._vel_x = lengthdir_x(throw_side_vel, _aim_angle);
+            _item_pickup._vel_y = lengthdir_y(throw_side_vel, _aim_angle);
             _item_pickup.sprite_index = _item_pickup._default_sprite;
-            //_item_pickup = noone;
+            _item_pickup = noone; // added back to prevent default drop
+            item = noone;         // We also don't have an item to pick up
             audio_play_sound(sound_throw, 4, false);
     }
 
@@ -488,21 +539,7 @@ camera_follow(x, y - 8);
         </arguments>
       </action>
     </event>
-    <event eventtype="8" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>604</id>
-        <kind>0</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>0</useapplyto>
-        <exetype>1</exetype>
-        <functionname>action_inherited</functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-      </action>
+    <event eventtype="8" enumb="73">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -522,14 +559,30 @@ camera_follow(x, y - 8);
             <string>/// If holding brick, draw retical
 
 if player_get_item_index() == objBrick {
-    var r = 5 * 16;
-    var dx = lengthdir_x(r, _last_move_dir);
-    var dy = lengthdir_y(r, _last_move_dir);
+    var r = 4.5 * 16;
+    var dx = lengthdir_x(r, _aim_angle);
+    var dy = lengthdir_y(r, _aim_angle);
     draw_sprite(sprRetical, 0, x+dx, y+dy);
 }
 </string>
           </argument>
         </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="0">
+      <action>
+        <libid>1</libid>
+        <id>604</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_inherited</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
       </action>
       <action>
         <libid>1</libid>

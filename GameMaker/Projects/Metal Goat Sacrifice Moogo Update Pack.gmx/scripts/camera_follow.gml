@@ -12,8 +12,8 @@ Gamestate._camera_shake *= 0.8;
 
 // Actually do the asymptotic smoothing
 var scale = 0.2;
-view_xview += (target_x - view_xview) * scale;
-view_yview += (target_y - view_yview) * scale;
+view_xview += (target_x - view_xview) * scale * get_dtime();
+view_yview += (target_y - view_yview) * scale * get_dtime();
 
 // Clamp
 if (room_width > view_wview) {

@@ -94,9 +94,9 @@ if instance_exists(objPlayer) {
     _near_player = sqr(objPlayer.x - x) + sqr(objPlayer.y - y) &lt; sqr(64);
     
     if _near_player &amp;&amp; !_sacrificing {
-        _animation_index++;
+        _animation_index += get_dtime();
     } else {
-        _animation_index--;
+        _animation_index -= get_dtime();
         if (_animation_index &lt; 0) _animation_index = 0;
     }
 }

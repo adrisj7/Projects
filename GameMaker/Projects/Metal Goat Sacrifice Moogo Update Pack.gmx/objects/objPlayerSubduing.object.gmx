@@ -117,7 +117,7 @@ if _space_counter &lt; _SPACE_NEEDED &amp;&amp; keyboard_check_pressed(vk_space)
     camera_shake_set_impulse(15);
     audio_play_sound(sound_goat_choke, 4, false);
 }
-_subdue_speed_factor *= 0.8;
+_subdue_speed_factor *= 0.8 * get_dtime();
 _subdue_speed_factor = clamp(_subdue_speed_factor, 0.4, 1);
 </string>
           </argument>
@@ -140,7 +140,7 @@ _subdue_speed_factor = clamp(_subdue_speed_factor, 0.4, 1);
           <argument>
             <kind>1</kind>
             <string>/// Manual animation and when finished
-image_index += _subdue_speed_factor * 10 / 60;
+image_index += (_subdue_speed_factor * 10 / 60) * get_dtime();
 
 var looping = _space_counter &lt; _SPACE_NEEDED;
 
