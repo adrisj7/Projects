@@ -114,9 +114,15 @@ if _space_counter &lt; _SPACE_NEEDED &amp;&amp; keyboard_check_pressed(vk_space)
     _space_counter++;
     _subdue_speed_factor = 1;
     image_index = _START_SUBDUE;
-    camera_shake_set_impulse(15);
+//    camera_shake_set_impulse(30 * _space_counter / _SPACE_NEEDED);
     audio_play_sound(sound_goat_choke, 4, false);
 }
+
+if _space_counter &lt; _SPACE_NEEDED {
+    _space_counter *= 0.99;
+    camera_shake_set_impulse(30 * _space_counter / _SPACE_NEEDED);
+}
+
 _subdue_speed_factor *= 0.8 * get_dtime();
 _subdue_speed_factor = clamp(_subdue_speed_factor, 0.4, 1);
 </string>
