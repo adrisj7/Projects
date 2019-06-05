@@ -1,0 +1,79 @@
+// 2019-06-01 14:18:57
+#event create Do the dialogue
+
+    // Color and delay
+// dialogue("Hello! \!Welcome to Walmart.\! .\|.\|. \!\S[2]you must die!");
+// dialogue_script(#lambda { game_end(); });
+
+    // Looping
+// dialogue("Please \!promise \!you'll \S[3]keep \C[3]this\^\C[0]\S[1] a secret!");
+// var temp = #lambda choice {
+//     dialogue_choice("\C[6]Yes", "Nah");
+//     // dialogue_choice_set_default("Nah");
+//     // dialogue_choose("\C[6]Yes", #lambda {
+//     //     dialogue("Yay, I knew I could trust the fate of the entire world to you!");
+//     // });
+//     // dialogue_choose("Nah", #lambda {
+//     //     dialogue("Aw cmon, pretty please?");
+//     //     dialogue_script(choice);
+//     // });
+// };
+// choice();
+// dialogue("Welp, looks like that was totally your choice!");
+
+// show_debug_message("OOF");
+// __dialogue_debug_print_queue_stack();
+
+// dialogue("1");
+// dialogue("1.5");
+// dialogue_choice("Yes", "No");
+// dialogue_choose("Yes", #lambda {
+//     dialogue("2");
+//     dialogue_choice("Yes?", "No?");
+//     dialogue_choose("Yes?", #lambda {
+//         dialogue("3");
+//     });
+// });
+// dialogue("4");
+
+//dialogue("Princess: Link, promise me you'll keep this a secret!");
+
+// var fn = #lambda choice {
+// show_debug_message("[DEBUG] !doof");
+// dialogue_choice("Yes", "Nah");
+// dialogue_choose("Yes", #lambda {
+//     show_debug_message("[DEBUG] oof 1");
+// dialogue("Princess: Yay, I knew I could trust the fate of the world in you!");
+// });
+// dialogue_choose("Nah",  #lambda {
+//     show_debug_message("[DEBUG] oof 2");
+// dialogue("Princess: Cmooon pretty please?");
+// //dialogue_script(choice);
+// });
+// };
+
+// choice();
+
+// dialogue("welp");
+
+
+// dialogue("This is an example dialogue!");
+// dialogue("What do you say?");
+// dialogue_choice("Sure!", "Nah");
+// dialogue_choose("Sure!", #lambda {
+//     dialogue("Good call.");
+// });
+// dialogue_choose("Nah", #lambda {
+//     dialogue("I'm deeply offended.");
+//     dialogue_choice("Too bad", "My bad");
+//     dialogue_choose("Too bad", #lambda {
+//         dialogue("oof");
+//     });
+//     dialogue_choose("My bad", #lambda {
+//         dialogue("It's all good");
+//     });
+// });
+
+// dialogue("Welp, that wraps it up.");
+
+instance_destroy();

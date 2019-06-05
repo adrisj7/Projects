@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,7 +25,17 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Public instance variables
+            <string>/// Public variables
+
+// Transition variables
+_open_duration = 15;
+_close_duration = 15;
+
+// Window variables
+_window_x = x;
+_window_y = y;
+_window_width = 0;
+_window_height = 0;
 </string>
           </argument>
         </arguments>
@@ -46,26 +56,21 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Private instance variables
+            <string>/// Util variables
 
-// Physics
-_vel_x = 0;
-_vel_y = 0;
+// true:  opening or open
+// false: closing or closed
+_opening = false;
 
-// Inputs. These control movement.
-_input_move_x = 0;
-_input_move_y = 0;
-
-// Tile movement
-
-// Initialize based on our current position
-_target_tile_x = tilemap_get_pos_x(0, x);
-_target_tile_y = tilemap_get_pos_y(0, y);
-
+// 0: completely closed
+// 1: completely open
+_progress = 0;
 </string>
           </argument>
         </arguments>
       </action>
+    </event>
+    <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -82,12 +87,76 @@ _target_tile_y = tilemap_get_pos_y(0, y);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Mandatory initialization stuff
+            <string>/// Handle progress and events
 
-// Snap our tile coordinates
-x = tilemap_get_pos_x(0, _target_tile_x);
-y = tilemap_get_pos_y(0, _target_tile_y);
+if _opening {
+    if _open_duration == 0 {
+        _progress = 1;
+    } else {
+        var delta = 1.0 / _open_duration;
+        // Opening or open
+        if _progress &lt; 1 {
+            _progress += delta;
+            if _progress &gt;= 1 {
+                _progress = 1;
+            }
+        }
+    }
+} else {
+    if _close_duration == 0 {
+        _progress = 0;
+    } else {
+        var delta = 1.0 / _close_duration;
 
+        if _progress &gt; 0 {
+            _progress -= delta;
+            if _progress &lt;= 0 {
+                _progress = 0;
+            }
+        }
+    }
+}
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+    </event>
+    <event eventtype="8" enumb="64">
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw window with transition effects
+display_set_gui_size(view_wview[0], view_hview[0]);
+
+var prog_pow_a = power(_progress, 2);
+
+var prev_alpha = draw_get_alpha();
+draw_set_alpha(prog_pow_a);
+
+var prog_pow_h = power(_progress, 0.2);
+
+var h = _window_height * prog_pow_h;
+h = clamp(h, sprite_get_height(dialogue_get_window_sprite()) / 4, _window_height);
+var dy = (_window_height - h) / 2;
+
+// Draw the window
+dialogue_draw_window(_window_x, _window_y + dy, _window_width, h);
+
+draw_set_alpha(prev_alpha);
 </string>
           </argument>
         </arguments>
