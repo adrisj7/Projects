@@ -1,0 +1,160 @@
+// 2019-05-29 21:00:05
+#event create Public variables
+
+// The text we're drawing
+_text = "";
+
+// How far we scroll each frame
+_scroll_speed = 2;
+
+// How fast we scroll each frame when we're skipping
+_scroll_speed_fast = 10;
+
+#section Util variables
+
+// Are we active, period?
+_active = false;
+
+// Are we scrolling?
+_text_active = false;
+
+// The current character in our string we're at
+_char_index = 0;
+
+// Whether we're waiting for player input
+_waiting = false;
+
+// Are we waiting to close?
+_waiting_closing = false;
+
+// 0: current char
+// 1: next char
+_char_progress = 0;
+
+// The thing that controls the waiting indicator
+_bouncer_index = 0;
+
+// Opener
+// TODO: roomify this
+
+_text_spacing = 6;
+
+var num_rows = 3;
+
+var text_height = num_rows*
+    ( font_get_size(dialogue_get_default_font()) + _text_spacing);
+
+_text_padding_x = 10;
+_text_padding_y = 6;
+_opener = dialogue_opener_create(
+        20,
+        view_hview[0] - 20 - text_height - 2 * _text_padding_y,
+        view_wview[0] - 20*2,
+        text_height + 2 * _text_padding_y + 10 // for good measure
+);
+// Draw over
+_opener.depth = depth + 1;
+
+#event step Dialogue Opener
+
+if dialogue_opener_is_open(_opener) {
+    _text_active = true;
+}
+
+if _active && dialogue_opener_is_closed(_opener) {
+    // Close and move on
+    _active = false;
+    __dialogue_next();
+}
+#section Progress text
+if _active && _text_active {
+
+    if _waiting {
+        // We're waiting on the player
+        if __dialogue_check_progress_pressed() {
+            _waiting = false;
+        }
+    }
+
+    // This is not an else because we want instant feedback!
+    if !_waiting {
+        // We're progressing the text
+        if _char_progress >= 1 {
+            // Call forth the next character!
+            ++_char_index;
+            if _char_index > string_length(_text) {
+                // Stop drawing, start waiting for a close
+                _char_index = string_length(_text);
+                _text_active = false;
+                _waiting_closing = true;
+            } else {
+                // TODO: Parse codes here
+                _char_progress -= 1;
+            }
+        } else {
+            // We're waiting for the next character
+            _char_progress += _scroll_speed;
+        }
+    }
+}
+
+// We're waiting for the user to close the text box (or move on)
+if _waiting_closing {
+    if __dialogue_check_progress_pressed() {
+        _waiting_closing = false;
+        // If we have more text, start from the beginning
+
+        // Debug
+        // show_debug_message("[DEBUG]: " + string(__dialogue_queue_get_up_next_type()));
+
+        if __dialogue_queue_get_up_next_type() == DialogueType.Text {
+            var data = __dialogue_queue_get_up_next_data();
+            _text = data[@ DialogueText.text];
+            _text_active = true;
+            _char_index = 0;
+            _char_progress = 0;
+            //__dialogue_queue_stack_pop();
+            __dialogue_pop();
+            //ds_list_queue_pop(__get_dialogue_current_queue());
+        } else {
+            // We got no more text left
+            dialogue_opener_close(_opener);
+        }
+    }
+}
+
+#section Bouncer index
+
+if _waiting || _waiting_closing {
+    _bouncer_index += 1 / 15;
+} else {
+    _bouncer_index = 0;
+}
+
+
+#event draw_gui Draw text if we're open
+display_set_gui_size(view_wview[0], view_hview[0]);
+
+if dialogue_opener_is_open(_opener) {
+
+    var substr = string_copy(_text, 0, _char_index);
+    draw_set_font(dialogue_get_default_font());
+    draw_set_color(c_white);
+    draw_set_alpha(1);
+    draw_text_ext(
+            dialogue_opener_get_window_x(_opener) + _text_padding_x,
+            dialogue_opener_get_window_y(_opener) + _text_padding_y,
+            substr,
+            font_get_size(dialogue_get_default_font()) + _text_spacing,
+            dialogue_opener_get_window_width(_opener) - 2*_text_padding_x
+    );
+
+    // If we're waiting
+    if _waiting || _waiting_closing {
+        dialogue_draw_bouncer(
+                dialogue_opener_get_window_x(_opener) + dialogue_opener_get_window_width(_opener) / 2,
+                dialogue_opener_get_window_y(_opener) + dialogue_opener_get_window_height(_opener) - _text_padding_y/2,
+                _bouncer_index
+        );
+    }
+}

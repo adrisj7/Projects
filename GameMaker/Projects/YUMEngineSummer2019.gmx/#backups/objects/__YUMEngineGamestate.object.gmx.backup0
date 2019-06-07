@@ -1,0 +1,20 @@
+// 2019-05-19 19:34:16
+#event create Public tile properties
+_tile_width = 32;
+_tile_height = 32;
+
+#section Initialize background tilemaps
+
+_tilemap_collision = tilemap_create(0, 0, _tile_width, _tile_height);
+_tilemap_event     = tilemap_create(0, 0, _tile_width, _tile_height);
+_tilemap_character = tilemap_create(0, 0, _tile_width, _tile_height);
+
+
+#event other_room_start Resize tilemaps to fill room
+
+tilemap_resize_to_fill_room(_tilemap_collision);
+tilemap_resize_to_fill_room(_tilemap_event);
+tilemap_resize_to_fill_room(_tilemap_character);
+
+// Refill the tilemaps to initialize them
+__refill_collision_tilemap();

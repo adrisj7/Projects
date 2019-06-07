@@ -3,21 +3,103 @@
   <Configs name="configs">
     <Config>Configs\Default</Config>
   </Configs>
-  <NewExtensions/>
+  <NewExtensions>
+    <extension index="0">extensions\gmedit_lambda</extension>
+  </NewExtensions>
   <sounds name="sound"/>
-  <sprites name="sprites"/>
-  <backgrounds name="background"/>
+  <sprites name="sprites">
+    <sprites name="YUMEngine">
+      <sprites name="Layout Components">
+        <sprite>sprites\sprYUMEngineComponentMenuChoice</sprite>
+        <sprite>sprites\sprYUMEngineComponentMenuStats</sprite>
+      </sprites>
+      <sprites name="Defaults">
+        <sprite>sprites\sprYUMEngineDefaultPlayer</sprite>
+        <sprite>sprites\sprYUMEngineDefaultPlayerPlacer</sprite>
+        <sprite>sprites\sprYUMEngineDefaultWindow</sprite>
+        <sprite>sprites\sprYUMEngineDefaultWindow2003</sprite>
+        <sprite>sprites\sprYUMEngineTestFlowDONOTUSE</sprite>
+      </sprites>
+      <sprites name="Example">
+        <sprite>sprites\sprExampleColliderMask</sprite>
+      </sprites>
+    </sprites>
+  </sprites>
+  <backgrounds name="background">
+    <backgrounds name="YUMEngine">
+      <backgrounds name="Defaults">
+        <background>background\bgYUMEngineDefaultMenuScreen</background>
+      </backgrounds>
+    </backgrounds>
+  </backgrounds>
   <paths name="paths"/>
   <scripts name="scripts">
+    <script>scripts\__engine.gml</script>
     <script>scripts\__tilemap.gml</script>
+    <script>scripts\__character.gml</script>
+    <script>scripts\__dialogue.gml</script>
+    <script>scripts\__misc.gml</script>
+    <script>scripts\__datatypes.gml</script>
+    <script>scripts\__menu.gml</script>
   </scripts>
+  <fonts name="fonts">
+    <font>fonts\fontYUMEngineDefaultText</font>
+  </fonts>
   <objects name="objects">
     <objects name="YUMEngine">
+      <object>objects\objYUMEngineCollider</object>
+      <objects name="Layout Components">
+        <object>objects\objYUMEngineComponentMenuChoice</object>
+        <object>objects\objYUMEngineComponentMenuStats</object>
+      </objects>
+      <objects name="Background">
+        <object>objects\__YUMEngineGamestate</object>
+        <object>objects\objYUMEngineCharacter</object>
+        <objects name="Dialogue">
+          <object>objects\__YUMEngineDialogueSystem</object>
+          <object>objects\__YUMEngineDialogueWindowOpener</object>
+          <object>objects\__YUMEngineTextDialogueRenderer</object>
+          <object>objects\__YUMEngineChoiceDialogueRenderer</object>
+        </objects>
+        <objects name="Menu">
+          <object>objects\__YUMEngineMenuSystem</object>
+          <object>objects\__YUMEngineMenuParent</object>
+          <object>objects\__YUMEngineMenuPlayer</object>
+          <object>objects\__YUMEngineMenuMain</object>
+          <object>objects\__YUMEngineMenuQuitCheck</object>
+        </objects>
+      </objects>
       <objects name="Tests">
-        <object>objects\testTilesetPlayer</object>
+        <object>objects\objTestGamestate</object>
+        <object>objects\objTestPlayer</object>
+        <object>objects\objTestCollider</object>
+        <object>objects\objExampleDialogue</object>
       </objects>
     </objects>
   </objects>
+  <rooms name="rooms">
+    <room>rooms\room_START</room>
+    <room>rooms\roomTestPlayer</room>
+    <rooms name="YUMEngine">
+      <room>rooms\room_YUMEngine_init</room>
+      <room>rooms\room_YUMEngine_mainmenu</room>
+      <room>rooms\layout_menu</room>
+    </rooms>
+  </rooms>
+  <constants number="12">
+    <constant name="tile_x">object_get_tile_x(id)</constant>
+    <constant name="tile_y">object_get_tile_y(id)</constant>
+    <constant name="tile_width">tilemap_global_get_tile_width()</constant>
+    <constant name="tile_height">tilemap_global_get_tile_height()</constant>
+    <constant name="dir_up">0</constant>
+    <constant name="dir_right">1</constant>
+    <constant name="dir_down">2</constant>
+    <constant name="dir_left">3</constant>
+    <constant name="menu_player">MenuType.Player</constant>
+    <constant name="menu_main">MenuType.Main</constant>
+    <constant name="menu_inventory">MenuType.Inventory</constant>
+    <constant name="menu_save">MenuType.Save</constant>
+  </constants>
   <help>
     <rtf>help.rtf</rtf>
   </help>

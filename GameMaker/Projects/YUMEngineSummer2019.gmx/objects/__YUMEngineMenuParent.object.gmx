@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,11 +25,18 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Public instance variables
+            <string>/// Control variables
+
+_type = MenuType.None;
+
+_active = false;
+_last_active = false;
 </string>
           </argument>
         </arguments>
       </action>
+    </event>
+    <event eventtype="3" enumb="2">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -46,26 +53,15 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Private instance variables
+            <string>/// Last active
 
-// Physics
-_vel_x = 0;
-_vel_y = 0;
-
-// Inputs. These control movement.
-_input_move_x = 0;
-_input_move_y = 0;
-
-// Tile movement
-
-// Initialize based on our current position
-_target_tile_x = tilemap_get_pos_x(0, x);
-_target_tile_y = tilemap_get_pos_y(0, y);
-
+_last_active = _active;
 </string>
           </argument>
         </arguments>
       </action>
+    </event>
+    <event eventtype="3" enumb="1">
       <action>
         <libid>1</libid>
         <id>603</id>
@@ -82,12 +78,8 @@ _target_tile_y = tilemap_get_pos_y(0, y);
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Mandatory initialization stuff
-
-// Snap our tile coordinates
-x = tilemap_get_pos_x(0, _target_tile_x);
-y = tilemap_get_pos_y(0, _target_tile_y);
-
+            <string>/// visible = _active
+visible = _active;
 </string>
           </argument>
         </arguments>
