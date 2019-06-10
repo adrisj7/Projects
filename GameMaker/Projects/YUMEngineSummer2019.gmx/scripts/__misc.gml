@@ -168,36 +168,32 @@
     );
 
     // Top middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left+sw, top,
-                         bw, sh,
-                         xpos + sw, ypos,
-                         edge_scale_x, 1,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + sw, top,
+                                bw, sh,
+                                xpos + sw, ypos,
+                                bdw,sh
     );
     // Bottom middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left + sw, top + (height - sh),
-                         bw, sh,
-                         xpos + sw, ypos + (draw_height - sh),
-                         edge_scale_x, 1,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + sw, top + (height - sh),
+                                bw, sh,
+                                xpos + sw, ypos + (draw_height - sh),
+                                bdw, sh
     );
     // Left middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left, top + sh,
-                         sw, bh,
-                         xpos, ypos + sh,
-                         1, edge_scale_y,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left, top + sh,
+                                sw, bh,
+                                xpos, ypos + sh,
+                                sh,bdh
     );
     // Right middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left + (width - sw), top + sh,
-                         sw, bh,
-                         xpos + (draw_width - sw), ypos + sh,
-                         1, edge_scale_y,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + (width - sw), top + sh,
+                                sw, bh,
+                                xpos + (draw_width - sw), ypos + sh,
+                                sh,bdh
     );
     // I think that about covers it!
 
@@ -322,6 +318,8 @@
 /// screen_set_fade(fade, frames)
     var fade = argument0, frames = argument1;
     var g = __get_gamestate();
+
+    // show_debug_message("[DEBUG]                         FADE: " + string(fade) + " : " + string(frames));
 
     if frames == 0 {
         g._fade_value = fade;

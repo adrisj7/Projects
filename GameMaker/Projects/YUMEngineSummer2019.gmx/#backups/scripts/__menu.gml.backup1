@@ -1,4 +1,4 @@
-// 2019-06-04 22:20:33
+// 2019-06-09 14:46:08
 #define __menu
 /// __menu()
     // Menu system!
@@ -8,7 +8,9 @@
         QuitConfirm,// Are you sure?
         Player,     // Pressing X in game
         Inventory,  // Inventory/Effects Menu
-        Save        // Save Game
+        Save,       // Save Game
+        Load,        // Load Game
+        Script
     }
 
 
@@ -25,22 +27,36 @@
 
 #define __menu_get_system_renderer
 /// __menu_get_system_renderer(type)
-    var type = argument0;
+    #args type
     // TODO: Fill these in while you make em
+    var obj_index = noone;
     switch type {
-        case MenuType.None:
-            return noone;
         case MenuType.Main:
-            return __YUMEngineMenuMain;
+            obj_index = __YUMEngineMenuMain;
+            break;
         case MenuType.QuitConfirm:
-            return __YUMEngineMenuQuitCheck;
+            obj_index = __YUMEngineMenuQuitCheck;
+            break;
         case MenuType.Player:
-            return __YUMEngineMenuPlayer;
+            obj_index = __YUMEngineMenuPlayer;
+            break;
         case MenuType.Inventory:
-            return noone;
+            obj_index = __YUMEngineMenuInventory;
+            break;
         case MenuType.Save:
-            return noone;
+            obj_index = noone;
+            break;
+        case MenuType.Load:
+            obj_index = noone;
+            break;
+        case MenuType.Script:
+            obj_index = __YUMEngineMenuScript;
+            break;
     }
+    if obj_index != noone {
+        return singleton_get(obj_index);
+    }
+    return noone;
 
 
 #define __menu_stack_empty
@@ -60,6 +76,13 @@
     ds_list_stack_pop(stack);
     // __menu_start_next();
     //}
+
+
+#define __menu_stack_pop_all
+/// __menu_stack_pop_all()
+    while !__menu_stack_empty()
+            __menu_stack_pop();
+    
 
 #define __menu_get_current_type
 /// __menu_get_current_type()
@@ -98,7 +121,7 @@
 
 #define __menu_start_next_ext
 /// __menu_start_next_ext(duration)
-    var duration = argument0;
+    #args duration
     // Starts the next menu, with a certain duration transition
     var sys = __get_menu_system();
     sys._fading = true;
@@ -113,6 +136,14 @@
     // Clears the menu and force closes it
     var sys = __get_menu_system();
     sys._menu_open = false;
+
+
+#define __menu_set_script
+/// __menu_set_script(script)
+    #args script
+    // Sets the menu script type
+    var ren = __menu_get_system_renderer(MenuType.Script);
+    ren._script = script;
 
 
 #define __menu_is_fading
@@ -143,14 +174,15 @@
 
 #define menu_open
 /// menu_open(type)
-    var type = argument0;
+    #args type
     var sys = __get_menu_system();
     menu_open_ext(type, sys._fade_duration_default);
+
 
 #define menu_open_ext
 /// menu_open_ext(type, duration)
     // Adds a menu to our menu stack
-    var type = argument0, duration = argument1;
+    #args type, duration
     var st = __get_menu_stack();
     ds_list_stack_push(st, type);
     // New menu! This menu is always the next one
@@ -159,22 +191,39 @@
 
 #define menu_close
 /// menu_close()
+    // Pop off the top and start the next
+    __menu_stack_pop();
     __menu_start_next();
 
 
 #define menu_close_ext
 /// menu_close_ext(duration)
-    var duration = argument0;
+    #args duration
     // Closes our current menu
     // var st = __get_menu_stack();
     //__menu_stack_pop();
     // ds_list_stack_pop(st);
+    __menu_stack_pop();
+    __menu_start_next_ext(duration);
+
+
+#define menu_close_all
+/// menu_close_all()
+    var sys = __get_menu_system();
+    menu_close_all_ext(sys._fade_duration_default);
+
+
+#define menu_close_all_ext
+/// menu_close_all_ext(duration)
+    #args duration
+    // Closes all menus
+    __menu_stack_pop_all();
     __menu_start_next_ext(duration);
 
 
 #define main_menu_set_background
 /// main_menu_set_background(background)
     // Sets the background sprite that's loaded at the beginning of the game
-    var background = argument0;
+    #args background
     var main = __menu_get_system_renderer(MenuType.Main);
     main._background = background;

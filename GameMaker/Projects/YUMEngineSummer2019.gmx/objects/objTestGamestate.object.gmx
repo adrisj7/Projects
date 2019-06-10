@@ -66,6 +66,37 @@ yumengine_begin();
           </argument>
         </arguments>
       </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Items
+
+global.item_bike = item_type_create("Bike", "Ride a bicycle");
+global.item_instructions = item_type_create("Instructions", "See the instructions again");
+
+item_type_set_script(global.item_bike, effect_begin_bike);
+item_type_set_useable(global.item_bike, false);
+
+inventory_add(global.item_instructions);
+inventory_add(global.item_bike);
+
+</string>
+          </argument>
+        </arguments>
+      </action>
     </event>
     <event eventtype="3" enumb="0">
       <action>

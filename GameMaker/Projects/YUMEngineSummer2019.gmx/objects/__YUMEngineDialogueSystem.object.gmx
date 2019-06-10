@@ -38,6 +38,10 @@ _default_font = fontYUMEngineDefaultText;
 
 // Whether to automatically accept menu inputs
 _auto_menu = true;
+
+// How long to wait on a press before considering it a long hold
+_input_hold_delay = 25;
+_input_hold_interval = 4;
 </string>
           </argument>
         </arguments>
@@ -65,17 +69,46 @@ _dialogue_queue_stack = ds_list_create();
 // Do we have a dialogue currently open?
 _dialogue_open = false;
 
-// Input
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Input Util
+
 // Are we pressing "Z"
 _input_progress = false;
+_input_progress_last = _input_progress;
 // Are we pressing "X"
 _input_cancel   = false;
-// For "input progress just pressed" Action button
-_input_progress_last = _input_progress;
 _input_cancel_last   = _input_cancel;
-// Input up and down (is_pressed)
-_input_up   = false;
-_input_down = false;
+
+// TODO: Remove Copy+Paste
+// Input up and down
+_input_up_raw   = false;
+_input_up_timer = 0;
+_input_down_raw = false;
+_input_down_timer = 0;
+// Left and right
+_input_left_raw   = false;
+_input_left_timer = 0;
+_input_right_raw = false;
+_input_right_timer = 0;
 
 </string>
           </argument>
@@ -148,9 +181,57 @@ _menu_input_buffer = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Reset up/down inputs to prevent accidental super scrolling
-_input_up   = false;
-_input_down = false;
+            <string>/// Input timers
+
+// TODO: Remove Copy+Paste
+if _input_up_raw {
+    ++_input_up_timer;
+} else {
+    _input_up_timer = 0;
+}
+
+if _input_down_raw {
+    ++_input_down_timer;
+} else {
+    _input_down_timer = 0;
+}
+
+if _input_left_raw {
+    ++_input_left_timer;
+} else {
+    _input_left_timer = 0;
+}
+
+if _input_right_raw {
+    ++_input_right_timer;
+} else {
+    _input_right_timer = 0;
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Reset axis inputs to prevent accidental super scrolling
+_input_up    = false;
+_input_down  = false;
+_input_left  = false;
+_input_right = false;
 </string>
           </argument>
         </arguments>
@@ -198,10 +279,18 @@ _input_cancel_last = _input_cancel;
             <kind>1</kind>
             <string>/// Auto Menu: Inputs and menu
 if _auto_menu {
-    dialogue_progress(keyboard_check(ord("Z")));
-    dialogue_cancel(keyboard_check(ord("X")));
-    dialogue_up(keyboard_check_pressed(vk_up));
-    dialogue_down(keyboard_check_pressed(vk_down));
+
+    // Default Inputs
+    dialogue_progress(keyboard_check(ord("Z")) || keyboard_check(vk_enter) || keyboard_check(vk_space));
+    dialogue_cancel(keyboard_check(ord("X")) 
+                 || keyboard_check(ord("C"))
+                 || keyboard_check(ord("V"))
+                 || keyboard_check(ord("B"))
+                 || keyboard_check(ord("N")));
+    dialogue_up(keyboard_check(vk_up) || keyboard_check(ord("K")));
+    dialogue_down(keyboard_check(vk_down) || keyboard_check(ord("J")));
+    dialogue_left(keyboard_check(vk_left) || keyboard_check(ord("H")));
+    dialogue_right(keyboard_check(vk_right) || keyboard_check(ord("L")));
 
     if !dialogue_is_open() {
         // Menu

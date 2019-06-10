@@ -7,7 +7,9 @@
         QuitConfirm,// Are you sure?
         Player,     // Pressing X in game
         Inventory,  // Inventory/Effects Menu
-        Save        // Save Game
+        Save,       // Save Game
+        Load,        // Load Game
+        Script
     }
 
 
@@ -26,20 +28,34 @@
 /// __menu_get_system_renderer(type)
     var type = argument0;
     // TODO: Fill these in while you make em
+    var obj_index = noone;
     switch type {
-        case MenuType.None:
-            return noone;
         case MenuType.Main:
-            return __YUMEngineMenuMain;
+            obj_index = __YUMEngineMenuMain;
+            break;
         case MenuType.QuitConfirm:
-            return __YUMEngineMenuQuitCheck;
+            obj_index = __YUMEngineMenuQuitCheck;
+            break;
         case MenuType.Player:
-            return __YUMEngineMenuPlayer;
+            obj_index = __YUMEngineMenuPlayer;
+            break;
         case MenuType.Inventory:
-            return noone;
+            obj_index = __YUMEngineMenuInventory;
+            break;
         case MenuType.Save:
-            return noone;
+            obj_index = noone;
+            break;
+        case MenuType.Load:
+            obj_index = noone;
+            break;
+        case MenuType.Script:
+            obj_index = __YUMEngineMenuScript;
+            break;
     }
+    if obj_index != noone {
+        return singleton_get(obj_index);
+    }
+    return noone;
 
 
 #define __menu_stack_empty
@@ -51,14 +67,14 @@
 #define __menu_stack_pop
 /// __menu_stack_pop()
     var stack = __get_menu_stack();
-    // if __menu_stack_empty() {
-    //     // If we're empty, release control
-    //     var sys = __get_menu_system();
-    //     sys._menu_open = false;
-    // } else {
     ds_list_stack_pop(stack);
-    // __menu_start_next();
-    //}
+
+
+#define __menu_stack_pop_all
+/// __menu_stack_pop_all()
+    while !__menu_stack_empty()
+            __menu_stack_pop();
+    
 
 #define __menu_get_current_type
 /// __menu_get_current_type()
@@ -114,6 +130,14 @@
     sys._menu_open = false;
 
 
+#define __menu_set_script
+/// __menu_set_script(script)
+    var script = argument0;
+    // Sets the menu script type
+    var ren = __menu_get_system_renderer(MenuType.Script);
+    ren._script = script;
+
+
 #define __menu_is_fading
 /// __menu_is_fading()
     // Is the menu transitioning?
@@ -146,6 +170,7 @@
     var sys = __get_menu_system();
     menu_open_ext(type, sys._fade_duration_default);
 
+
 #define menu_open_ext
 /// menu_open_ext(type, duration)
     // Adds a menu to our menu stack
@@ -158,6 +183,8 @@
 
 #define menu_close
 /// menu_close()
+    // Pop off the top and start the next
+    __menu_stack_pop();
     __menu_start_next();
 
 
@@ -168,6 +195,21 @@
     // var st = __get_menu_stack();
     //__menu_stack_pop();
     // ds_list_stack_pop(st);
+    __menu_stack_pop();
+    __menu_start_next_ext(duration);
+
+
+#define menu_close_all
+/// menu_close_all()
+    var sys = __get_menu_system();
+    menu_close_all_ext(sys._fade_duration_default);
+
+
+#define menu_close_all_ext
+/// menu_close_all_ext(duration)
+    var duration = argument0;
+    // Closes all menus
+    __menu_stack_pop_all();
     __menu_start_next_ext(duration);
 
 

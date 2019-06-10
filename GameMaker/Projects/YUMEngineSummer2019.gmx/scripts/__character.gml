@@ -16,6 +16,8 @@
     if !_ignore_collisions {
         var mx = character_get_tile_x(id),
             my = character_get_tile_y(id);
+        // show_debug_message("[DEBUG] (" + string(mx) + ", " + string(my) 
+        //         + ") + (" + string(delta_tile_x) + ", " + string(delta_tile_y) + ")");
         if tilemap_collision_get(mx + delta_tile_x, my)
             delta_tile_x = 0;
         if tilemap_collision_get(mx, my + delta_tile_y)
@@ -173,6 +175,7 @@
     if !character._ignore_dialogue && dialogue_is_open() {
         return -1;
     }
+    // Cancel on menu
     if menu_is_open() {
         return -1;
     }
