@@ -216,9 +216,15 @@ _moving_this_frame = true;
             <string>/// Player Movement
 
 if character_get_player() == id {
+    // Arrow keys
     var xaxis = keyboard_check(vk_right) - keyboard_check(vk_left),
         yaxis = keyboard_check(vk_down)  - keyboard_check(vk_up);
+    // Vim??!! (rpgmaker was made in vim confirmed!)
+    xaxis += keyboard_check(ord("L")) - keyboard_check(ord("H"));
+    yaxis += keyboard_check(ord("J")) - keyboard_check(ord("K"));
 
+    xaxis = clamp(xaxis, -1, 1);
+    yaxis = clamp(yaxis, -1, 1);
     character_move(id, xaxis, yaxis);
 
 }
@@ -296,6 +302,8 @@ if character_is_moving(id) {
         // Should we stop or can we still push forward?
         if keep_moving {
             // We can still move on
+            // This checks for collisions
+            __character_update_delta_tile(_delta_tile_x, _delta_tile_y);
             _target_progress -= 1; // %= 1
         } else {
             // We stopped

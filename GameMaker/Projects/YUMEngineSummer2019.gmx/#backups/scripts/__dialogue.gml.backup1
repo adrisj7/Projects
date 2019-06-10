@@ -1,4 +1,4 @@
-// 2019-06-04 22:04:06
+// 2019-06-09 17:53:04
 #define __dialogue
 /// __dialogue()
 
@@ -500,16 +500,40 @@
     return sys._input_cancel && !sys._input_cancel_last;
 
 
+#define __dialogue_check_hold_timer
+/// __dialogue_check_hold_timer(raw_input, timer)
+    #args raw_input, timer
+    var sys = __get_dialogue_system();
+    if raw_input {
+        if timer == 0 {
+            return true;
+        }
+        if timer >= sys._input_hold_delay {
+            var delta = timer - sys._input_hold_delay;
+            if delta % sys._input_hold_interval == 0 {
+                return true;
+            }
+        }
+        return false;
+    }
+    return false;
+
 #define __dialogue_check_up
 /// __dialogue_check_up()
-
     var sys = __get_dialogue_system();
-    return sys._input_up;
+    return __dialogue_check_hold_timer(sys._input_up_raw, sys._input_up_timer);
 #define __dialogue_check_down
 /// __dialogue_check_down()
-
     var sys = __get_dialogue_system();
-    return sys._input_down;
+    return __dialogue_check_hold_timer(sys._input_down_raw, sys._input_down_timer);
+#define __dialogue_check_left
+/// __dialogue_check_left()
+    var sys = __get_dialogue_system();
+    return __dialogue_check_hold_timer(sys._input_left_raw, sys._input_left_timer);
+#define __dialogue_check_right
+/// __dialogue_check_right()
+    var sys = __get_dialogue_system();
+    return __dialogue_check_hold_timer(sys._input_right_raw, sys._input_right_timer);
 
 
 #define __dialogue_get_scale_factor
@@ -646,17 +670,23 @@
 #define dialogue_up
 /// dialogue_up(up_input)
     #args up_input
-
     var sys = __get_dialogue_system();
-    sys._input_up = up_input;
-
-
+    sys._input_up_raw = up_input;
 #define dialogue_down
 /// dialogue_down(down_input)
     #args down_input
-
     var sys = __get_dialogue_system();
-    sys._input_down = down_input;
+    sys._input_down_raw = down_input;
+#define dialogue_left
+/// dialogue_left(left_input)
+    #args left_input
+    var sys = __get_dialogue_system();
+    sys._input_left_raw = left_input;
+#define dialogue_right
+/// dialogue_right(right_input)
+    #args right_input
+    var sys = __get_dialogue_system();
+    sys._input_right_raw = right_input;
 
 
 #define dialogue_set_window_sprite
@@ -817,7 +847,18 @@
             }
         }
         if draw {
-            draw_text(xpos + current_w, ypos + current_h, char);
+            // Draw the character
+            var col = draw_get_color();
+            var col_h = color_get_hue(col),
+                col_s = color_get_saturation(col),
+                col_v = color_get_value(col);
+            var col_darker = make_color_hsv(col_h, col_s, col_v / 2);
+            var col_shadow = make_color_hsv(col_h, 0, 50);
+            var tx = xpos + current_w,
+                ty = ypos + current_h;
+            // Draw the shadow and then the faded top text
+            draw_text_color(tx + 1, ty + 1, char, col_shadow, col_shadow, col_shadow, col_shadow, draw_get_alpha());
+            draw_text_color(tx, ty, char, col, col, col_darker, col_darker, draw_get_alpha());
             current_w += string_width(char);
             // Handle w and sep
             if current_w > w && w != -1 {
@@ -849,7 +890,7 @@
      */
 
     // Stuff inside the window (bumped up)
-    var bump = 4 * __dialogue_get_scale_factor(); // TODO: Should this be setabble?
+    var bump = 4 * __dialogue_get_scale_factor();
     var left    = xpos + bump,
         right   = xpos + width - bump,
         top     = ypos + bump,
@@ -919,6 +960,15 @@
         );
     }
 
+
+#define dialogue_draw_cursor_timed
+/// dialogue_draw_cursor(xpos, ypos, width, height, time)
+    #args xpos, ypos, width, height, time
+    var fill_inside = (time % 20) > 10;
+    dialogue_draw_cursor(xpos, ypos, width, height, fill_inside);
+
+
+
 #define dialogue_draw_choice
 /// dialogue_draw_choice(xpos, ypos, width, height, choices, selected, time)
     #args xpos, ypos, width, height, choices, selected, time
@@ -927,7 +977,7 @@
     var tpx = dialogue_get_text_padding_x(),
         tpy = dialogue_get_text_padding_y();
 
-    var bump = 4 * __dialogue_get_scale_factor();
+    var bump = dialogue_get_selection_bump();
 
     var tx = xpos + tpx,
         ty = ypos + tpy;
@@ -945,9 +995,10 @@
         // Draw cursor over our selected
         if i == selected {
             //draw_set_alpha( osc(0.1, 1, 60 ,_select_timer) );
-            var fill_inside = (time % 20) > 10;
-            dialogue_draw_cursor(tx - bump, ty - bump,
-                                 width - 2*tpx + 2*bump, text_height + 2*bump, fill_inside);
+            dialogue_draw_cursor_timed(
+                tx - bump, ty - bump,
+               width - 2*tpx + 2*bump, text_height + 2*bump, time
+            );
             //draw_set_alpha(1);
         }
 
@@ -1022,6 +1073,19 @@
     opener._opening = false;
     if opener._close_duration == 0 {
         opener._progress = 0;
+    }
+
+#define dialogue_opener_set_open_auto
+/// dialogue_opener_set_open_auto(opener, is_open)
+    #args opener, is_open
+    // Opens or closes a dialogue, waiting for it to be open or closed before
+    // doing so.
+    if is_open {
+        if dialogue_opener_is_closed(opener)
+            dialogue_opener_open(opener);
+    } else {
+        if dialogue_opener_is_open(opener)
+            dialogue_opener_close(opener);
     }
 
 #define dialogue_opener_set_window_position
@@ -1126,9 +1190,13 @@
 /// dialogue_get_text_padding_y()
     // Gets the y padding of text from the top of a window
     // TODO: Store this as a variable somewhere
-    return 6;
+    return 10;//6;
 #define dialogue_get_text_spacing
 /// dialogue_get_text_spacing()
     // Gets the spacing of text between each line
     // TODO: Store this as a variable somewhere
-    return 8     * __dialogue_get_scale_factor();
+    return 8 * __dialogue_get_scale_factor();
+#define dialogue_get_selection_bump
+/// dialogue_get_selection_bump()
+    return 4 * __dialogue_get_scale_factor();
+

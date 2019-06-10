@@ -90,6 +90,15 @@
           <argCount>-1</argCount>
           <args/>
         </function>
+        <function>
+          <name>__lf_objTestGamestate_create_</name>
+          <externalName>__lf_objTestGamestate_create_</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>-1</argCount>
+          <args/>
+        </function>
       </functions>
       <constants/>
     </file>

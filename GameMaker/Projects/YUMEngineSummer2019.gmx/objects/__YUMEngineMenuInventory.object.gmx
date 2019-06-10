@@ -39,16 +39,19 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Choices
+            <string>/// Openers
 
-_choices = array_create(2);
-_choices[@ 0] = "Yes";
-_choices[@ 1] = "No";
+var desc_height = 32;
 
-_quitting = false;
+_opener_description = dialogue_opener_create(0, 0, view_wview[0], desc_height);
+_opener_slots       = dialogue_opener_create(0, desc_height, view_wview[0], view_hview[0] - desc_height);
 
-_choice_selected = 0;
-_select_timer = 0;
+dialogue_opener_set_open_duration( _opener_description, 0);
+dialogue_opener_set_close_duration(_opener_description, 0);
+dialogue_opener_set_open_duration( _opener_slots, 0);
+dialogue_opener_set_close_duration(_opener_slots, 0);
+
+
 </string>
           </argument>
         </arguments>
@@ -69,25 +72,17 @@ _select_timer = 0;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Openers
+            <string>/// Selection and Slots util
 
-var sw = view_wview[0],
-    sh = view_hview[0];
+// What selection we're on
+_selection_index = 0;
 
-// prompt width and height
-var pw = 128 + 48 + 8,
-    ph = 32;
+// Timer while we're selecting
+_selection_timer = 0;
 
-// choice width and height
-var cw = 32,
-    ch = 48;
-
-_prompt_opener = dialogue_opener_create(sw/2 - pw/2, sh/2 - 16 - ph, pw, ph);
-dialogue_opener_set_open_duration(_prompt_opener, 0);
-dialogue_opener_set_close_duration(_prompt_opener, 0);
-_choice_opener = dialogue_opener_create(sw/2 - cw/2, sh/2, cw, ch);
-dialogue_opener_set_open_duration(_choice_opener, 0);
-dialogue_opener_set_close_duration(_choice_opener, 0);
+// How many slots we get per row,
+// or how many columns we have in our inventory system
+_columns = 2;
 
 </string>
           </argument>
@@ -97,6 +92,20 @@ dialogue_opener_set_close_duration(_choice_opener, 0);
     <event eventtype="3" enumb="0">
       <action>
         <libid>1</libid>
+        <id>604</id>
+        <kind>0</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>0</useapplyto>
+        <exetype>1</exetype>
+        <functionname>action_inherited</functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+      </action>
+      <action>
+        <libid>1</libid>
         <id>603</id>
         <kind>7</kind>
         <userelative>0</userelative>
@@ -112,9 +121,10 @@ dialogue_opener_set_close_duration(_choice_opener, 0);
           <argument>
             <kind>1</kind>
             <string>/// Openers
+// TODO: Custom method?
 
-dialogue_opener_set_open_auto(_prompt_opener, _active);
-dialogue_opener_set_open_auto(_choice_opener, _active);
+dialogue_opener_set_open_auto(_opener_description, _active);
+dialogue_opener_set_open_auto(_opener_slots, _active);
 
 </string>
           </argument>
@@ -137,121 +147,41 @@ dialogue_opener_set_open_auto(_choice_opener, _active);
           <argument>
             <kind>1</kind>
             <string>/// Input
-
 if _active &amp;&amp; !__menu_is_fading() {
-    if !_quitting &amp;&amp; !__menu_is_fading() {
-        // Select. TODO: Standardize this to avoid copy pasting
-        var len = array_length_1d(_choices);
-        var delta = __dialogue_check_down() - __dialogue_check_up();
-        _choice_selected += delta;
-        if _choice_selected &lt; 0
-            _choice_selected = len - 1;
-        if _choice_selected &gt;= len
-            _choice_selected = 0;
-        
-        // Selection
-        if __dialogue_check_progress_pressed() {
-            switch _choice_selected {
-                case 0: // Yes!
-                    // Do thing
-                    _quitting = true;
-                    screen_set_fade(1, 30);
-                    break;
-                case 1: // No
-                    menu_close();
-                    break;
+    ++_selection_timer;
+
+    var axis_x = __dialogue_check_right() - __dialogue_check_left();
+    var axis_y = __dialogue_check_down() - __dialogue_check_up();
+
+    var delta = axis_x + axis_y * _columns;
+
+    var new = _selection_index + delta;
+
+    // Actually move. Play sound effect here
+    if new != _selection_index &amp;&amp; 0 &lt;= new &amp;&amp; new &lt; inventory_get_count() {
+        _selection_index = new;
+    }
+
+
+    if __dialogue_check_progress_pressed() {
+        // Selection. Load up the script and start the next menu,
+        //            which will run the script
+        var type = inventory_get(_selection_index);
+        if item_type_exists(type) &amp;&amp; item_type_get_useable(type) {
+            var scr = item_type_get_script(type);
+            if scr != noone &amp;&amp; !script_exists(scr) {
+                show_error("aw fuk, don't use lambdas" + string(scr), true);
             }
-        } else if __dialogue_check_cancel_pressed() {
-            // Default: Close
-            menu_close();
+            __menu_set_script(scr);
+            __menu_stack_pop_all();
+            menu_open(MenuType.Script);
         }
+    } else if __dialogue_check_cancel_pressed() {
+        // Cancelling
+        menu_close();
     }
-} else if !_active {
-    // Default choice
-    _choice_selected = 0;
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Select timer
-if _active &amp;&amp; !__menu_is_fading() {
-    ++_select_timer;
 } else {
-    _select_timer = 0;
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Quitting
-
-if _active &amp;&amp; _quitting {
-    if screen_get_fade_percent() == 1 {
-        game_restart();
-    }
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="8" enumb="74">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Background
-display_set_gui_size(view_wview[0], view_hview[0]);
-
-if _active {
-    draw_set_alpha(1);
-    draw_set_color(c_black);
-    draw_rectangle(0, 0, view_wview[0], view_hview[0], false);
+    _selection_timer = 0;
 }
 </string>
           </argument>
@@ -275,21 +205,72 @@ if _active {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Draw dialogue prompt and choices
+            <string>/// Draw Description
+
 display_set_gui_size(view_wview[0], view_hview[0]);
 
-// Prompt
-var tx = dialogue_opener_get_window_x(_prompt_opener) + dialogue_get_text_padding_x(),
-    ty = dialogue_opener_get_window_y(_prompt_opener) + dialogue_get_text_padding_y(),
-dialogue_draw_text(tx, ty, "End game and return to menu?");
+var type = inventory_get(_selection_index);
+if item_type_exists(type) {
+    var desc = item_type_get_description(type);
+    var xpos = dialogue_opener_get_window_x(_opener_description) + dialogue_get_text_padding_x(),
+        ypos = dialogue_opener_get_window_y(_opener_description) + dialogue_get_text_padding_y();
+    dialogue_draw_text(xpos, ypos, desc);
+}
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Draw Slots and Selector
 
-// Choice
-// TODO: Add function to draw choice over window
-var cx = dialogue_opener_get_window_x(_choice_opener),
-    cy = dialogue_opener_get_window_y(_choice_opener),
-    cw = dialogue_opener_get_window_width(_choice_opener),
-    ch = dialogue_opener_get_window_height(_choice_opener);
-dialogue_draw_choice(cx, cy, cw, ch, _choices, _choice_selected, _select_timer);
+var tx = dialogue_opener_get_window_x(_opener_slots) + dialogue_get_text_padding_x(),
+    ty = dialogue_opener_get_window_y(_opener_slots) + dialogue_get_text_padding_y();
+var w =  dialogue_opener_get_window_width(_opener_slots);
+var bump = dialogue_get_selection_bump();
+var text_height = string_height("A");
+
+var dw = (w - 2*bump) / 2 + bump;
+var dh = text_height + dialogue_get_text_spacing();
+
+var select_width = dw + 2*bump - 16;
+
+for (var i = 0; i &lt; inventory_get_count(); ++i) {
+    var xslot = i % _columns,
+        yslot = floor(i / _columns);
+    var dx = tx + xslot * dw + bump,
+        dy = ty + yslot * dh;
+    var type = inventory_get(i);
+    
+    var text = item_type_get_name(type);
+    var count = ":  " + string(inventory_get_quantity(i));
+    if !item_type_get_useable(type) {
+        text  = "\C[7]" + text;
+        count = "\C[7]" + count;
+    }
+    draw_set_font(dialogue_get_default_font());
+    dialogue_draw_text(dx, dy, text);
+    dialogue_draw_text(dx + select_width - string_width(":  1") - 8, dy, count);
+
+    // Cursor
+    if i == _selection_index {
+        dialogue_draw_cursor_timed(dx - bump, dy - bump, select_width, text_height + 2*bump, _selection_timer);
+    }
+}
 
 </string>
           </argument>

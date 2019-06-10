@@ -43,6 +43,7 @@
       <script>scripts\EXAMPLE_camera_follow.gml</script>
     </scripts>
   </scripts>
+  <shaders name="shaders"/>
   <objects name="objects">
     <objects name="YUMEngine Core">
       <objects name="Collision System">

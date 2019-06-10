@@ -28,11 +28,33 @@
             <string>/// Util variables
 _running = false;
 
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Layouts
+
 // Layout loading
 _layouts = ds_list_create();
 
 // Add Layouts here
-ds_list_add(_layouts, layout_menu);
+//ds_list_add(_layouts, layout_menu);
 
 // Util: Moves through layouts
 _current_layout = 0;
@@ -184,14 +206,19 @@ _player_character = noone;
             <string>/// Layouts and Main Menu
 
 if _running &amp;&amp; _current_layout != -1 {
-    var layout = ds_list_find_value(_layouts, _current_layout);
-    room_goto(layout);
-    ++_current_layout;
+    var done = _current_layout &gt;= ds_list_size(_layouts);
+    if !done {
+        var layout = ds_list_find_value(_layouts, _current_layout);
+        room_goto(layout);
+        ++_current_layout;
+    }
     // We're done, load menu
-    if _current_layout &gt;= ds_list_size(_layouts) {
+    if done {
         _current_layout = -1;
         show_debug_message("[DEBUG] Opening Menu");
         menu_open_ext(menu_main, 60);
+        // Skip the fade down
+        screen_set_fade(1, 0);
     }
 }
 
@@ -218,7 +245,7 @@ if _running &amp;&amp; _current_layout != -1 {
             <string>/// Fade util
 
 var delta = _fade_target - _fade_value;
-if abs(delta) &lt; _fade_delta {
+if abs(delta) &lt; abs(_fade_delta) {
     _fade_value = _fade_target;
 } else {
     _fade_value += sign(delta) * abs(_fade_delta);

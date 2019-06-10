@@ -63,8 +63,8 @@ _type = MenuType.Player;
             <kind>1</kind>
             <string>/// Openers
 
-var cw = 64,
-    ch = 18;
+var cw = 64 + 48 - 32 + 8,
+    ch = 48;
 
 _opener_choice = dialogue_opener_create(0, 0, cw, ch);
 dialogue_opener_set_open_duration(_opener_choice, 0);
@@ -150,19 +150,11 @@ _quitting = false;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Handle Openers
+            <string>/// Openers
 
-if _active {
-    if dialogue_opener_is_closed(_opener_choice)
-        dialogue_opener_open(_opener_choice);
-    if dialogue_opener_is_closed(_opener_stats)
-        dialogue_opener_open(_opener_stats);
-} else {
-    if dialogue_opener_is_open(_opener_choice)
-        dialogue_opener_close(_opener_choice);
-    if dialogue_opener_is_open(_opener_stats)
-        dialogue_opener_close(_opener_stats);
-}
+dialogue_opener_set_open_auto(_opener_choice, _active);
+dialogue_opener_set_open_auto(_opener_stats, _active);
+
 </string>
           </argument>
         </arguments>
@@ -185,7 +177,7 @@ if _active {
             <kind>1</kind>
             <string>/// User input
 
-if _active {
+if _active &amp;&amp; !__menu_is_fading(){
     var len = array_length_1d(_choices);
     var delta = __dialogue_check_down() - __dialogue_check_up();
     _choice_selected += delta;
@@ -214,7 +206,7 @@ if _active {
         menu_close();
     }
 
-} else {
+} else if !menu_is_open() {
     _choice_selected = 0;
 }
 

@@ -27,7 +27,7 @@
             <kind>1</kind>
             <string>/// Fading Public
 
-_fade_duration_default = 5; // in frames
+_fade_duration_default = 8; // in frames
 
 </string>
           </argument>
@@ -107,10 +107,11 @@ _fade_closing = true;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Systems
-instance_create(0, 0, __YUMEngineMenuPlayer);
-instance_create(0, 0, __YUMEngineMenuMain);
-instance_create(0, 0, __YUMEngineMenuQuitCheck);
+            <string>/// One error check
+if instance_number(object_index) &gt; 1 {
+    show_error("You accidentally created a clone. Wrong parent probably", true);
+}
+
 </string>
           </argument>
         </arguments>
@@ -135,11 +136,12 @@ instance_create(0, 0, __YUMEngineMenuQuitCheck);
             <kind>1</kind>
             <string>/// Fading and Menu opening
 
+
 if _fading {
     if _fade_closing {
         if screen_get_fade_percent() == 1 {
             // JUST FADED OUT
-            show_debug_message("[DEBUG] Faded DARK");
+            //show_debug_message("[DEBUG] Faded DARK");
             screen_set_fade(0, _fade_duration);
             _fade_closing = false;
             // Disable our previous menu, enable our new menu
@@ -147,23 +149,23 @@ if _fading {
             var newr = __menu_get_system_renderer(new);
             if newr != noone {
                 newr._active = true;
-                show_debug_message("[DEBUG]    NEW: " + string(new));
-            } else show_debug_message("[DEBUG]    NEW: (none)");
-            __menu_stack_pop();
+                //show_debug_message("[DEBUG]    NEW: " + string(new));
+            }// else show_debug_message("[DEBUG]    NEW: (none)");
+            //__menu_stack_pop();
             var old = __menu_get_current_type();
             var oldr = __menu_get_system_renderer(old);
             if oldr != noone {
                 oldr._active = false;
-                show_debug_message("[DEBUG]    OLD: " + string(old));
-            } else show_debug_message("[DEBUG]    OLD: (none)");
+                //show_debug_message("[DEBUG]    OLD: " + string(old));
+            }// else show_debug_message("[DEBUG]    OLD: (none)");
             // Set our current menu
             _menu_current = new;
         }
     } else {
         if screen_get_fade_percent() == 0 {
             // JUST UNFADED BACK
-            show_debug_message("[DEBUG] Faded LIGHT");
-            show_debug_message("[DEBUG]    CURRENT: " + string(__menu_get_current_type()));
+            //show_debug_message("[DEBUG] Faded LIGHT");
+            //show_debug_message("[DEBUG]    CURRENT: " + string(__menu_get_current_type()));
             // Resume player control
             _fading = false;
             // If we got no more menus, resume control

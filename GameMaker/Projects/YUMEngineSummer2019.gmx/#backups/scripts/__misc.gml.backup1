@@ -1,4 +1,4 @@
-// 2019-06-04 12:19:32
+// 2019-06-09 14:47:15
 #define __misc
 /// __misc()
 
@@ -6,14 +6,14 @@
 
 
 #define singleton_get
-/// singleton_get(object_index)
+/// singleton_get(obj_index)
     // Gets a singleton object, creating one if it doesn't exist.
-    #args object_index
-    if !instance_exists(object_index) {
-        var obj = instance_create(0, 0, object_index);
+    #args obj_index
+    if !instance_exists(obj_index) {
+        var obj = instance_create(0, 0, obj_index);
         event_perform_object(obj, ev_create, 0);
     }
-    return object_index;
+    return obj_index;
 
 
 #define osc
@@ -169,36 +169,32 @@
     );
 
     // Top middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left+sw, top,
-                         bw, sh,
-                         xpos + sw, ypos,
-                         edge_scale_x, 1,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + sw, top,
+                                bw, sh,
+                                xpos + sw, ypos,
+                                bdw,sh
     );
     // Bottom middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left + sw, top + (height - sh),
-                         bw, sh,
-                         xpos + sw, ypos + (draw_height - sh),
-                         edge_scale_x, 1,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + sw, top + (height - sh),
+                                bw, sh,
+                                xpos + sw, ypos + (draw_height - sh),
+                                bdw, sh
     );
     // Left middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left, top + sh,
-                         sw, bh,
-                         xpos, ypos + sh,
-                         1, edge_scale_y,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left, top + sh,
+                                sw, bh,
+                                xpos, ypos + sh,
+                                sh,bdh
     );
     // Right middle
-    draw_sprite_part_ext(sprite, subimg, 
-                         left + (width - sw), top + sh,
-                         sw, bh,
-                         xpos + (draw_width - sw), ypos + sh,
-                         1, edge_scale_y,
-                         color, alpha
+    draw_sprite_part_tiled_size(sprite, subimg,
+                                left + (width - sw), top + sh,
+                                sw, bh,
+                                xpos + (draw_width - sw), ypos + sh,
+                                sh,bdh
     );
     // I think that about covers it!
 
@@ -323,6 +319,8 @@
 /// screen_set_fade(fade, frames)
     #args fade, frames
     var g = __get_gamestate();
+
+    show_debug_message("[DEBUG]                         FADE: " + string(fade) + " : " + string(frames));
 
     if frames == 0 {
         g._fade_value = fade;

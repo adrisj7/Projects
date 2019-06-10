@@ -41,6 +41,10 @@
     <script>scripts\__misc.gml</script>
     <script>scripts\__datatypes.gml</script>
     <script>scripts\__menu.gml</script>
+    <script>scripts\__item.gml</script>
+    <scripts name="Tests">
+      <script>scripts\effects.gml</script>
+    </scripts>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fontYUMEngineDefaultText</font>
@@ -52,21 +56,26 @@
         <object>objects\objYUMEngineComponentMenuChoice</object>
         <object>objects\objYUMEngineComponentMenuStats</object>
       </objects>
-      <objects name="Background">
-        <object>objects\__YUMEngineGamestate</object>
+      <objects name="Background Entities">
+        <object>objects\__YUMEngineDialogueWindowOpener</object>
         <object>objects\objYUMEngineCharacter</object>
+      </objects>
+      <objects name="Background Systems">
+        <object>objects\__YUMEngineGamestate</object>
+        <object>objects\__YUMEngineDialogueSystem</object>
+        <object>objects\__YUMEngineMenuSystem</object>
+        <object>objects\__YUMEngineItemSystem</object>
         <objects name="Dialogue">
-          <object>objects\__YUMEngineDialogueSystem</object>
-          <object>objects\__YUMEngineDialogueWindowOpener</object>
           <object>objects\__YUMEngineTextDialogueRenderer</object>
           <object>objects\__YUMEngineChoiceDialogueRenderer</object>
         </objects>
         <objects name="Menu">
-          <object>objects\__YUMEngineMenuSystem</object>
           <object>objects\__YUMEngineMenuParent</object>
           <object>objects\__YUMEngineMenuPlayer</object>
           <object>objects\__YUMEngineMenuMain</object>
           <object>objects\__YUMEngineMenuQuitCheck</object>
+          <object>objects\__YUMEngineMenuInventory</object>
+          <object>objects\__YUMEngineMenuScript</object>
         </objects>
       </objects>
       <objects name="Tests">
@@ -86,7 +95,7 @@
       <room>rooms\layout_menu</room>
     </rooms>
   </rooms>
-  <constants number="12">
+  <constants number="13">
     <constant name="tile_x">object_get_tile_x(id)</constant>
     <constant name="tile_y">object_get_tile_y(id)</constant>
     <constant name="tile_width">tilemap_global_get_tile_width()</constant>
@@ -99,6 +108,7 @@
     <constant name="menu_main">MenuType.Main</constant>
     <constant name="menu_inventory">MenuType.Inventory</constant>
     <constant name="menu_save">MenuType.Save</constant>
+    <constant name="menu_load">MenuType.Load</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

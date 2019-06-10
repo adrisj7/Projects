@@ -176,13 +176,11 @@ if __menu_sys_is_just_opened() {
           <argument>
             <kind>1</kind>
             <string>/// Opener
-if _active {
-    if dialogue_opener_is_closed(_opener)
-        dialogue_opener_open(_opener);
-} else {
-    if dialogue_opener_is_open(_opener)
-        dialogue_opener_close(_opener);
-}
+
+// Only open when we're done fading
+if (!_active || screen_get_fade_percent() == 0)
+    dialogue_opener_set_open_auto(_opener, _active);
+
 </string>
           </argument>
         </arguments>
@@ -231,7 +229,7 @@ if _active {
           <argument>
             <kind>1</kind>
             <string>/// Choice
-if _active &amp;&amp; !_beginning &amp;&amp; !_quitting {
+if _active &amp;&amp; !_quitting &amp;&amp; !__menu_is_fading() {
     var len = array_length_1d(_choices);
     var delta = __dialogue_check_down() - __dialogue_check_up();
     _choice_selected += delta;
@@ -343,7 +341,7 @@ if _active {
             <string>/// Draw choices
 display_set_gui_size(view_wview[0], view_hview[0]);
 
-if _active &amp;&amp; !_quitting {
+if _active &amp;&amp; dialogue_opener_is_open(_opener) {
     dialogue_draw_choice(
         dialogue_opener_get_window_x(_opener),
         dialogue_opener_get_window_y(_opener),
