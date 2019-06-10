@@ -57,7 +57,10 @@
 #define __refill_event_tilemap
 /// __refill_event_tilemap()
 
-    // TODO: Events
+    var tmap = __get_tilemap_event();
+
+    // Clear. Events are filled in by other objects in the room
+    tilemap_clear(tmap, noone);
 
 
 #define __refill_character_tilemap

@@ -273,7 +273,7 @@ if abs(delta) &lt; abs(_fade_delta) {
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Resize tilemaps to fill room
+            <string>/// Tilemaps: Resize and refill
 if _running {
     tilemap_resize_to_fill_room(_tilemap_collision);
     tilemap_resize_to_fill_room(_tilemap_event);
@@ -281,6 +281,7 @@ if _running {
     
     // Refill the tilemaps to initialize them
     __refill_collision_tilemap();
+    __refill_event_tilemap();
 }
 
 </string>
