@@ -312,13 +312,54 @@ if character_is_moving(id) {
 
         // Reset sprite (TODO: Function for "on tile enter" event?)
         __character_reset_sprite_resting();
-        //if keep_moving
-        //    __character_bump_sprite();
+        
+        // Check for events
+        var event = event_get(character_get_tile_x(id), character_get_tile_y(id));
+        // Touch event
+        if event != noone &amp;&amp; event_get_trigger(event) == EventTrigger.Touch {
+            event_call_script(event);
+        }
     }
 } else {
     // We're not moving, so accept all inputs
     __character_handle_input();
 }
+
+</string>
+          </argument>
+        </arguments>
+      </action>
+      <action>
+        <libid>1</libid>
+        <id>603</id>
+        <kind>7</kind>
+        <userelative>0</userelative>
+        <isquestion>0</isquestion>
+        <useapplyto>-1</useapplyto>
+        <exetype>2</exetype>
+        <functionname></functionname>
+        <codestring></codestring>
+        <whoName>self</whoName>
+        <relative>0</relative>
+        <isnot>0</isnot>
+        <arguments>
+          <argument>
+            <kind>1</kind>
+            <string>/// Action events
+
+if  character_get_player() == id
+    &amp;&amp; __character_can_move() 
+    &amp;&amp; !character_is_moving(id) 
+    &amp;&amp; __dialogue_check_progress_pressed() {
+    var fx = character_get_facing_tile_x(id),
+        fy = character_get_facing_tile_y(id);
+    var event = event_get(fx, fy);
+    // Touch event
+    if event != noone &amp;&amp; event_get_trigger(event) == EventTrigger.Action {
+        event_call_script(event);
+    }    
+}
+
 
 </string>
           </argument>

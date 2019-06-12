@@ -19,6 +19,7 @@
         <sprite>sprites\sprYUMEngineDefaultWindow</sprite>
         <sprite>sprites\sprYUMEngineDefaultWindow2003</sprite>
         <sprite>sprites\sprYUMEngineTestFlowDONOTUSE</sprite>
+        <sprite>sprites\sprYUMEngineMyPlayer</sprite>
       </sprites>
       <sprites name="Example">
         <sprite>sprites\sprExampleColliderMask</sprite>
@@ -45,6 +46,7 @@
     <script>scripts\__event.gml</script>
     <scripts name="Tests">
       <script>scripts\effects.gml</script>
+      <script>scripts\tile_effects.gml</script>
     </scripts>
   </scripts>
   <fonts name="fonts">
@@ -85,6 +87,7 @@
         <object>objects\objTestPlayer</object>
         <object>objects\objTestCollider</object>
         <object>objects\objExampleDialogue</object>
+        <object>objects\objTestTileEvent</object>
       </objects>
     </objects>
   </objects>
@@ -97,7 +100,7 @@
       <room>rooms\layout_menu</room>
     </rooms>
   </rooms>
-  <constants number="13">
+  <constants number="15">
     <constant name="tile_x">object_get_tile_x(id)</constant>
     <constant name="tile_y">object_get_tile_y(id)</constant>
     <constant name="tile_width">tilemap_global_get_tile_width()</constant>
@@ -111,6 +114,8 @@
     <constant name="menu_inventory">MenuType.Inventory</constant>
     <constant name="menu_save">MenuType.Save</constant>
     <constant name="menu_load">MenuType.Load</constant>
+    <constant name="trigger_action">EventTrigger.Action</constant>
+    <constant name="trigger_touch">EventTrigger.Touch</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

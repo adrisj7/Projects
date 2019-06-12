@@ -45,11 +45,7 @@
     // "User is telling me to do this, what do I REALLY do?"
 
     // If we're dealing with dialogue and we don't ignore, stop.
-    if !_ignore_dialogue && dialogue_is_open() {
-        __character_update_delta_tile(0, 0);
-        return -1;
-    }
-    if menu_is_open() {
+    if !__character_can_move() {
         __character_update_delta_tile(0, 0);
         return -1;
     }
@@ -171,12 +167,8 @@
 /// character_move(character, tile_dx, tile_dy)
     var character = argument0, tile_dx = argument1, tile_dy = argument2;
 
-    // Cancel on dialogue
-    if !character._ignore_dialogue && dialogue_is_open() {
-        return -1;
-    }
-    // Cancel on menu
-    if menu_is_open() {
+    // Cancel on dialogue/menu
+    if !__character_can_move() {
         return -1;
     }
 
@@ -338,3 +330,24 @@
 /// character_get_player()
     var sys = __get_gamestate();
     return sys._player_character;
+
+#define character_get_facing_tile_x
+/// character_get_facing_tile_x(character)
+    var character = argument0;
+    // Get the x coordinate of the tile the character is facing
+
+    var dx = tiledir_x(1, character_get_orientation(character));
+    return character_get_tile_x(character) + dx;
+
+#define character_get_facing_tile_y
+/// character_get_facing_tile_y(character)
+    var character = argument0;
+    // Get the y coordinate of the tile the character is facing
+
+    var dy = tiledir_y(1, character_get_orientation(character));
+    return character_get_tile_y(character) + dy;
+
+#define __character_can_move
+/// __character_can_move()
+    // TODO: Move me back
+return (_ignore_dialogue || !dialogue_is_open()) && !menu_is_open();

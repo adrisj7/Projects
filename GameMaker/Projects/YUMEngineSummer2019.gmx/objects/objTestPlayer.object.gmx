@@ -28,7 +28,7 @@
             <string>/// Create our character
 
 _character = character_create(tile_x, tile_y);
-character_set_move_spritesheet(_character, sprYUMEngineDefaultPlayer, 0);
+character_set_move_spritesheet(_character, sprYUMEngineMyPlayer, 0);//sprYUMEngineDefaultPlayer, 0);
 character_set_move_origin(_character, sprite_xoffset, sprite_yoffset);
 
 character_set_player(_character);
