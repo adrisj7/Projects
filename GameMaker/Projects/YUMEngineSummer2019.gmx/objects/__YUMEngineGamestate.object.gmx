@@ -203,7 +203,7 @@ _player_character = noone;
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Layouts and Main Menu
+            <string>/// Layouts and Entering Main Menu
 
 if _running &amp;&amp; _current_layout != -1 {
     var done = _current_layout &gt;= ds_list_size(_layouts);

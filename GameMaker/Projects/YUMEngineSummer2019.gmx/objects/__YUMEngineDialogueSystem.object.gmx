@@ -319,10 +319,10 @@ if _auto_menu {
 
     if !dialogue_is_open() {
         // Menu
-        if __dialogue_check_cancel_pressed() &amp;&amp; !menu_is_open() {
+        if __dialogue_check_cancel_pressed() &amp;&amp; !menu_is_open() &amp;&amp; !warp_is_warping() {
             _menu_input_buffer = true;
         }
-        
+
         if _menu_input_buffer {
             var player = character_get_player();
             if player == noone || character_took_step(player) || !character_is_moving(player) {

@@ -25,14 +25,8 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Create event
-
-event_shortcut_note("Hi there!", "This worked!");
-
-//var e = event_create(tile_x, tile_y, tile_effect_sound);
-//event_set_trigger(e, trigger_action);
-
-instance_destroy();
+            <string>/// Messages
+_messages = ds_list_create();
 </string>
           </argument>
         </arguments>

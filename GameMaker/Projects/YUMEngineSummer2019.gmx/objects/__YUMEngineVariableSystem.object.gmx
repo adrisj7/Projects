@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>0</visible>
   <depth>0</depth>
-  <persistent>0</persistent>
+  <persistent>-1</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,14 +25,7 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>/// Create event
-
-event_shortcut_note("Hi there!", "This worked!");
-
-//var e = event_create(tile_x, tile_y, tile_effect_sound);
-//event_set_trigger(e, trigger_action);
-
-instance_destroy();
+            <string>/// Global variables
 </string>
           </argument>
         </arguments>

@@ -44,6 +44,10 @@
     <script>scripts\__menu.gml</script>
     <script>scripts\__item.gml</script>
     <script>scripts\__event.gml</script>
+    <script>scripts\__save.gml</script>
+    <script>scripts\__variable.gml</script>
+    <script>scripts\__warping.gml</script>
+    <script>scripts\__event_shortcuts.gml</script>
     <scripts name="Tests">
       <script>scripts\effects.gml</script>
       <script>scripts\tile_effects.gml</script>
@@ -61,7 +65,7 @@
       </objects>
       <objects name="Background Entities">
         <object>objects\__YUMEngineDialogueWindowOpener</object>
-        <object>objects\objYUMEngineCharacter</object>
+        <object>objects\__YUMEngineCharacter</object>
       </objects>
       <objects name="Background Systems">
         <object>objects\__YUMEngineGamestate</object>
@@ -69,6 +73,8 @@
         <object>objects\__YUMEngineMenuSystem</object>
         <object>objects\__YUMEngineItemSystem</object>
         <object>objects\__YUMEngineEventSystem</object>
+        <object>objects\__YUMEngineVariableSystem</object>
+        <object>objects\__YUMEngineWarpSystem</object>
         <objects name="Dialogue">
           <object>objects\__YUMEngineTextDialogueRenderer</object>
           <object>objects\__YUMEngineChoiceDialogueRenderer</object>
@@ -100,7 +106,7 @@
       <room>rooms\layout_menu</room>
     </rooms>
   </rooms>
-  <constants number="15">
+  <constants number="16">
     <constant name="tile_x">object_get_tile_x(id)</constant>
     <constant name="tile_y">object_get_tile_y(id)</constant>
     <constant name="tile_width">tilemap_global_get_tile_width()</constant>
@@ -116,6 +122,7 @@
     <constant name="menu_load">MenuType.Load</constant>
     <constant name="trigger_action">EventTrigger.Action</constant>
     <constant name="trigger_touch">EventTrigger.Touch</constant>
+    <constant name="event_current">__event_get_current()</constant>
   </constants>
   <help>
     <rtf>help.rtf</rtf>

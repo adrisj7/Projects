@@ -197,6 +197,13 @@
     }
 
 
+#define inventory_clear
+/// inventory_clear()
+    // Removes all items from the inventory
+    var list = __item_get_inventory();
+    ds_list_clear(list);
+
+
 #define inventory_get_count
 /// inventory_get_count()
     var inv = __item_get_inventory();
@@ -262,3 +269,17 @@
     return !is_undefined(item_index)
         && item_index >= 0
         && item_index < array_length_1d(list);
+#define item_type_get_by_name
+/// item_type_get_by_name(item_name)
+    var item_name = argument0;
+    // Returns the item type that has that name
+
+    var list = __item_get_list();
+    for (var i = 0; i < ds_list_size(list); ++i) {
+        var item = list[| i];
+        if item_type_get_name(item) == item_name {
+            return item;
+        }
+    }
+    // none found
+    return noone;

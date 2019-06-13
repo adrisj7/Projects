@@ -103,12 +103,14 @@
     var sys = __get_gamestate();
     sys._player_character = character;
 
+    // Our player is persistent
+    character.persistent = true;
 
 #define character_create
 /// character_create(tile_xpos, tile_ypos)
     var tile_xpos = argument0, tile_ypos = argument1;
     
-    var char = instance_create(0, 0, objYUMEngineCharacter);
+    var char = instance_create(0, 0, __YUMEngineCharacter);
     char._current_tile_x = tile_xpos;
     char._current_tile_y = tile_ypos;
     char._delta_tile_x = 0;
@@ -273,6 +275,20 @@
     character._auto_orient = set;
 
 
+#define character_set_position
+/// character_set_position(character, tile_x_, tile_y_);
+    var character = argument0, tile_x_ = argument1, tile_y_ = argument2;
+
+    character._current_tile_x = tile_x_;
+    character._current_tile_y = tile_y_;
+
+
+#define character_set_orientation
+/// character_set_orientation(character, orientation);
+    var character = argument0, orientation = argument1;
+    character._orientation = orientation;
+
+
 #define character_is_moving
 /// character_is_moving(character)
     var character = argument0;
@@ -350,4 +366,4 @@
 #define __character_can_move
 /// __character_can_move()
     // TODO: Move me back
-return (_ignore_dialogue || !dialogue_is_open()) && !menu_is_open();
+return (_ignore_dialogue || !dialogue_is_open()) && !menu_is_open() && !warp_is_warping();
